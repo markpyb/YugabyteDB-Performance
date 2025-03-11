@@ -22,6 +22,8 @@ Note that I used YugabyteDB 2024.2.0 which is the base release of the latest sta
 ---
 My intallation route on redhat.
 ---
+
+```
 sudo yum install git make gcc dos2unix -y 
 git clone https://github.com/vadimtk/ssb-dbgen.git
 cd ssb-dbgen
@@ -33,11 +35,13 @@ cd yugabyte-client-2.25.0.0
 echo 'export PATH=$PATH:/home/ec2-user/SSB/ssb-dbgen/yugabyte-client-2.25.0.0/bin' >> ~/.bashrc
 source ~/.bashrc
 cd /home/ec2-user/SSB/ssb-dbgen
+```
 
 -----
 Preparing the files
 -----
 
+```
 rm -f *.tbl
 ./dbgen -s 1 -T c
 ./dbgen -s 1 -T p
@@ -46,19 +50,27 @@ rm -f *.tbl
 ./dbgen -s 1 -T l
 sed -i 's/,$//' *.tbl
 export PGPASSWORD="pw!"
+```
 
 ---
 Preparing the schema and loading the data
 
+```
 ysqlsh -h {host} -c "\i schema_and_data.sql"
+```
 
 ---
 Executing example Q1 to Q4 SSB benchmark queries 
+
+```
 ysqlsh -h {host} -c "\i querieswithexplain.sql" > querieswithexplain_results.txt
+```
 
 ---
 Listing the queries Executed
 ---
+
+```
 select 'Q1.1' as Query;
 EXPLAIN (ANALYZE, VERBOSE OFF, COSTS OFF) SELECT SUM(lo_extendedprice * lo_discount) AS revenue
 FROM lineorder l,
@@ -294,10 +306,13 @@ GROUP BY d.d_year,
 ORDER BY d.d_year,
          s.s_city,
          p.p_brand1;
+```
 
 ---
 Listing the results from said queries
 ---
+
+```
  query 
 -------
  Q1.1
@@ -755,4 +770,4 @@ Listing the results from said queries
  Execution Time: 350.038 ms
  Peak Memory Usage: 10262 kB
 (33 rows)
-
+```
