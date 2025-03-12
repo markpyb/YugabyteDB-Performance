@@ -9,7 +9,9 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 
 <b>Note: Work in progress</b>
 I only tested different join orders for Seed 1 and applied the same join order for Seeds 2, 3, and 10. This was my first run of this benchmark, so I’m open to suggestions for improvements.
+
 <b>My TODO:</b>
+
 - update Seed 3 and 4 with new GUC Setting
 - check execution plans are optimal from indexing or if i should be looking at a different join order or plan
 
