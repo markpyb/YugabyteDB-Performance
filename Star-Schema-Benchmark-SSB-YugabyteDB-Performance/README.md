@@ -6,14 +6,19 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - No extra denormalization or restructuring done yet specifically for performance. 
 
 
+## Overall Notes:
 
-<b>Note: Work in progress</b>
-I only tested different join orders for Seed 1 and applied the same join order for Seeds 2, 3, and 10. This was my first run of this benchmark, so I’m open to suggestions for improvements.
+- Current indexing is a first draft by me: a deeper look into it planned for later.
+- Results highlight YugabyteDB’s effectiveness at distributed JOINs and aggregations and great performance with PostgreSQL API
+- Ideal for mixed OLTP/OLAP/HTAP scenarios, enabling single-database solutions.
+- Seeing great performance results against PostgresSQL, considering PostgreSQL has one node usually with non zero RPO fault tolerance 
 
-<b>My TODO:</b>
+## My TODO
 
-- update Seed 3 and 4 with new GUC Setting
+- update Seed 3 and  with new GUC Setting
+- Run Seed 3 and 10 against PG for PG timings 
 - check execution plans are optimal from indexing or if i should be looking at a different join order or plan
+- Test against preview Yugabyte (2.25)
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 - Query Parameters used are displayed below 
@@ -33,6 +38,9 @@ Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 | Q4.1  | Time        | 795 ms     | 483 ms  | 1.8 s   | 2.8 s   | 10.8 s    |
 | Q4.2  | Time        | 914 ms     | 537 ms  | 2.1 s   | 2.9 s   | 11.8 s    |
 | Q4.3  | Time        | 266 ms     | 183 ms  | 485 ms  | 731 ms  | 2.4 s     |
+
+Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB 
+- I plan to run Seed 3 and Seed 10 in the future against PG
 
 ---
 
@@ -54,17 +62,9 @@ Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 
 ---
 
-## Additional Notes:
-
-- Current indexing is a first draft by me: a deeper look into it planned for later.
-- Results highlight YugabyteDB’s effectiveness at distributed JOINs and aggregations and great performance with PostgreSQL API
-- Ideal for mixed OLTP/OLAP/HTAP scenarios, enabling single-database solutions.
-
----
-
 ### Contributing:
 
-Improvements and optimizations are welcome! (indexing, hinting, GUC setting) 
+Improvements and optimizations are welcome! (indexing, hinting, GUC setting)  Or testing against Aurora, RDS etc.
 
 ---
 My intallation route on redhat.
