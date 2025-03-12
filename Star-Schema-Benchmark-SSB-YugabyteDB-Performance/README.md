@@ -4,12 +4,21 @@ Summary Of Great Performance Results:
 
 Here’s the revised table clearly referencing the fact table size (lineorder table row counts) and converting Seed 10 execution times into seconds, as requested:
 
-| Seed | Lineorder Rows (Fact Table Size) | Q1.1 (ms) | Q1.2 (ms) | Q1.3 (ms) | Q2.1 (ms) | Q2.2 (ms) | Q2.3 (ms) | Q3.1 (ms) | Q3.2 (ms) | Q3.3 (ms) | Q3.4 (ms) | Q4.1 (ms) | Q4.2 (ms) | Q4.3 (ms) |
-|------|----------------------------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
-| 1    | 6 million                        | 171       | 11        | 4         | 514       | 64        | 9         | 1956      | 217       | 2382      | 43        | 1713      | 1991      | 401       |
-| 2    | 11 million                       | 296       | 14        | 6         | 805       | 169       | 27        | 2115      | 354       | 2222      | 69        | 1854      | 2121      | 485       |
-| 3    | 17 million                       | 242       | 16        | 7         | 1288      | 214       | 34        | 3020      | 507       | 3090      | 87        | 2801      | 2997      | 731       |
-| 10   | 59 million                       | 624       | 28        | 11        | 2060      | 428       | 65        | 9664      | 1667      | 12091     | 245       | 10886     | 11899     | 2433      |
+| Query | Seed 1 (6M rows) | Seed 2 (11M rows) | Seed 3 (17M rows) | Seed 10 (60M rows) |
+|-------|------------------|-------------------|-------------------|--------------------|
+| Q1.1  | 162 ms           | 296 ms            | 242 ms            | 624 ms             |
+| Q1.2  | 8 ms             | 14 ms             | 16 ms             | 28 ms              |
+| Q1.3  | 3 ms             | 6 ms              | 7 ms              | 11 ms              |
+| Q2.1  | 487 ms           | 805 ms            | 1288 ms (1.2 s)   | 2060 ms (2.0 s)    |
+| Q2.2  | 92 ms            | 169 ms            | 214 ms            | 428 ms             |
+| Q2.3  | 17 ms            | 27 ms             | 34 ms             | 65 ms              |
+| Q3.1  | 833 ms           | 2115 ms (2.1 s)   | 3020 ms (3.0 s)   | 9664 ms (9.6 s)    |
+| Q3.2  | 138 ms           | 354 ms            | 507 ms            | 1667 ms (1.6 s)    |
+| Q3.3  | 859 ms           | 2222 ms (2.2 s)   | 3090 ms (3.0 s)   | 12091 ms (12.0 s)  |
+| Q3.4  | 33 ms            | 69 ms             | 87 ms             | 245 ms             |
+| Q4.1  | 772 ms           | 1854 ms (1.8 s)   | 2801 ms (2.8 s)   | 10886 ms (10.8 s)  |
+| Q4.2  | 731 ms           | 2121 ms (2.1 s)   | 2997 ms (2.9 s)   | 11899 ms (11.8 s)  |
+| Q4.3  | 185 ms           | 485 ms            | 731 ms            | 2433 ms (2.4 s)    |
 
 This repository contains the schema definitions, indexing, data creation, data-loading, and performance execution plans for running the Star Schema Benchmark (SSB) on YugabyteDB's YSQL (PostgreSQL) Query Layer.
 

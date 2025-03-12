@@ -99,14 +99,18 @@ create index q4_1_p on part(p_mfgr ASC, p_partkey);
 create index q4_1_l on lineorder(lo_partkey ASC, lo_orderdate ASC, lo_suppkey, lo_custkey) include(lo_revenue, lo_supplycost);
 create index q4_1_2l on lineorder(lo_suppkey,  lo_orderdate ASC, lo_partkey ASC,  lo_custkey) include(lo_revenue, lo_supplycost);
 
+set yb_enable_upsert_mode=on;
+set yb_disable_transactional_writes=on;
 \COPY customer FROM 'customer.tbl' WITH (FORMAT csv, DELIMITER ',', QUOTE '"');
 \COPY part FROM 'part.tbl' WITH (FORMAT csv, DELIMITER ',', QUOTE '"');
 \COPY supplier FROM 'supplier.tbl' WITH (FORMAT csv, DELIMITER ',', QUOTE '"');
 \COPY date_tbl FROM 'date.tbl' WITH (FORMAT csv, DELIMITER ',', QUOTE '"');
 \COPY lineorder FROM 'lineorder.tbl' WITH (FORMAT csv, DELIMITER ',', QUOTE '"');
+set yb_enable_upsert_mode=off;
+set yb_disable_transactional_writes=off;
 
 alter database yugabyte set yb_enable_base_scans_cost_model=true; 
-alter database yugabyte set work_mem='32MB';
+alter database yugabyte set work_mem='64MB';
+alter database yugabyte set yb_fetch_row_limit=7000;
 \c yugabyte
 analyze;
-
