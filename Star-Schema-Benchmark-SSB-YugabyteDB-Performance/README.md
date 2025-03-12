@@ -1,7 +1,9 @@
 # Running SSB (Star Schema Benchmark) on YugabyteDB
 
 - Standard SSB schema (normalized to SSB standards).
-- No extra denormalization or restructuring done yet specifically for performance.
+- No extra denormalization or restructuring done yet specifically for performance. 
+- Queries executed against YugabyteDB demonstrate near-linear scalability as the dataset (lineorder table rows) increases from 6 million to 60 million rows.
+- The performance results indicate effective indexing and query optimization, with query response times growing predictably as data volume expands, making it well-suited for growing workloads.
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB Using 
 
