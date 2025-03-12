@@ -4,20 +4,12 @@ Summary Of Great Performance Results:
 
 Here’s the revised table clearly referencing the fact table size (lineorder table row counts) and converting Seed 10 execution times into seconds, as requested:
 
-Query	Seed 1 (6 million rows)	Seed 2 (11.9 million rows)	Seed 3 (17.9 million rows)	Seed 10 (59.9 million rows)
-Q1.1	267 ms	296 ms	242 ms	0.624 sec
-Q1.2	13 ms	14 ms	16 ms	0.028 sec
-Q1.3	7 ms	6 ms	7 ms	0.011 sec
-Q2.1	810 ms	805 ms	1288 ms	2.060 sec
-Q2.2	160 ms	169 ms	214 ms	0.428 sec
-Q2.3	27 ms	27 ms	34 ms	0.065 sec
-Q3.1	2115 ms	2115 ms	3020 ms	9.664 sec
-Q3.2	354 ms	355 ms	507 ms	1.667 sec
-Q3.3	2222 ms	2223 ms	3090 ms	12.091 sec
-Q3.4	69 ms	69 ms	87 ms	0.245 sec
-Q4.1	1854 ms	1854 ms	2801 ms	10.886 sec
-Q4.2	2121 ms	2121 ms	2997 ms	11.899 sec
-Q4.3	485 ms	485 ms	731 ms	2.433 sec
+| Seed | Lineorder Rows (Fact Table Size) | Q1.1 (ms) | Q1.2 (ms) | Q1.3 (ms) | Q2.1 (ms) | Q2.2 (ms) | Q2.3 (ms) | Q3.1 (ms) | Q3.2 (ms) | Q3.3 (ms) | Q3.4 (ms) | Q4.1 (ms) | Q4.2 (ms) | Q4.3 (ms) |
+|------|----------------------------------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|-----------|
+| 1    | 6 million                        | 171       | 11        | 4         | 514       | 64        | 9         | 1956      | 217       | 2382      | 43        | 1713      | 1991      | 401       |
+| 2    | 11 million                       | 296       | 14        | 6         | 805       | 169       | 27        | 2115      | 354       | 2222      | 69        | 1854      | 2121      | 485       |
+| 3    | 17 million                       | 242       | 16        | 7         | 1288      | 214       | 34        | 3020      | 507       | 3090      | 87        | 2801      | 2997      | 731       |
+| 10   | 59 million                       | 624       | 28        | 11        | 2060      | 428       | 65        | 9664      | 1667      | 12091     | 245       | 10886     | 11899     | 2433      |
 
 This repository contains the schema definitions, indexing, data creation, data-loading, and performance execution plans for running the Star Schema Benchmark (SSB) on YugabyteDB's YSQL (PostgreSQL) Query Layer.
 
