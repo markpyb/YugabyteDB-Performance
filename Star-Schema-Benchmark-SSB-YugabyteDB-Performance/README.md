@@ -15,24 +15,24 @@ I only tested different join orders for Seed 1 and applied the same join order f
 - update Seed 3 and 4 with new GUC Setting
 - check execution plans are optimal from indexing or if i should be looking at a different join order or plan
 
-Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB  
+Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 - Query Parameters used are displayed below 
 
-| Query | Seed(LRows) |   1 (6M)   |  2 (11M)   |  3 (17M)   | 10 (60M)  |
-|-------|-------------|------------|------------|------------|-----------|
-| Q1.1  | Time        | 90 ms      | 167 ms     | 242 ms     | 624 ms    |
-| Q1.2  | Time        | 8 ms       | 12 ms      | 16 ms      | 28 ms     |
-| Q1.3  | Time        | 5 ms       | 6 ms       | 8 ms       | 12 ms     |
-| Q2.1  | Time        | 256 ms     | 660 ms     | 1.2 s      | 2.0 s     |
-| Q2.2  | Time        | 65 ms      | 130 ms     | 214 ms     | 428 ms    |
-| Q2.3  | Time        | 15 ms      | 24 ms      | 34 ms      | 65 ms     |
-| Q3.1  | Time        | 1 s        | 2 s        | 3.0 s      | 9.7 s     |
-| Q3.2  | Time        | 167 ms     | 354 ms     | 507 ms     | 1.7 s     |
-| Q3.3  | Time        | 1 s        | 2.1 s      | 3.0 s      | 12.0 s    |
-| Q3.4  | Time        | 45 ms      | 69 ms      | 87 ms      | 245 ms    |
-| Q4.1  | Time        | 795 ms     | 1.8 s      | 2.8 s      | 10.8 s    |
-| Q4.2  | Time        | 914 ms     | 2.1 s      | 2.9 s      | 11.8 s    |
-| Q4.3  | Time        | 266 ms     | 485 ms     | 731 ms     | 2.4 s     |
+| Query | Seed(LRows) | YB 1 (6M) | PG (6M) | 2 (11M) | 3 (17M) | 10 (60M) |
+|-------|-------------|------------|---------|---------|---------|-----------|
+| Q1.1  | Time        | 90 ms      | 47 ms   | 167 ms  | 242 ms  | 624 ms    |
+| Q1.2  | Time        | 8 ms       | 2 ms    | 12 ms   | 16 ms   | 28 ms     |
+| Q1.3  | Time        | 5 ms       | 0 ms    | 6 ms    | 8 ms    | 12 ms     |
+| Q2.1  | Time        | 256 ms     | 94 ms   | 660 ms  | 1.2 s   | 2.0 s     |
+| Q2.2  | Time        | 65 ms      | 29 ms   | 130 ms  | 214 ms  | 428 ms    |
+| Q2.3  | Time        | 15 ms      | 5 ms    | 24 ms   | 34 ms   | 65 ms     |
+| Q3.1  | Time        | 1 s        | 483 ms  | 2 s     | 3.0 s   | 9.7 s     |
+| Q3.2  | Time        | 167 ms     | 83 ms   | 354 ms  | 507 ms  | 1.7 s     |
+| Q3.3  | Time        | 1 s        | 1222 ms | 2.1 s   | 3.0 s   | 12.0 s    |
+| Q3.4  | Time        | 45 ms      | 11 ms   | 69 ms   | 87 ms   | 245 ms    |
+| Q4.1  | Time        | 795 ms     | 483 ms  | 1.8 s   | 2.8 s   | 10.8 s    |
+| Q4.2  | Time        | 914 ms     | 537 ms  | 2.1 s   | 2.9 s   | 11.8 s    |
+| Q4.3  | Time        | 266 ms     | 183 ms  | 485 ms  | 731 ms  | 2.4 s     |
 
 ---
 
@@ -168,6 +168,36 @@ ysqlsh -h 10.0.0.61 -c "\i schema_and_data.sql"
 ysqlsh -h 10.0.0.61 -c "\i querieswithexplain.sql" > querieswithexplain2024.2_results_SEED_10_new.txt
 ```
 
+
+--- 
+PG
+---
+
+
+sudo yum install postgresql15-server -y
+sudo /usr/pgsql-15/bin/postgresql-15-setup initdb
+sudo sed -i -e "s/^#*port = .*/port = 5555/" -e "s/^#*listen_addresses = .*/listen_addresses = '*'/" /var/lib/pgsql/15/data/postgresql.conf
+sudo systemctl enable postgresql-15
+sudo systemctl start postgresql-15
+sudo systemctl status postgresql-15
+sudo -iu postgres psql -p 5555
+
+rm -f *.tbl
+./dbgen -s 1 -T c
+./dbgen -s 1 -T p
+./dbgen -s 1 -T s
+./dbgen -s 1 -T d
+./dbgen -s 1 -T l
+sed -i 's/,$//' *.tbl
+cp *.tbl /tmp
+
+cp schema_and_data.sql /tmp/schema_and_data_PG.sql
+chmod 644 /tmp/schema_and_data_PG.sql
+sudo -iu postgres psql -p 5555 -f /tmp/schema_and_data_PG.sql
+
+cp querieswithexplain.sql /tmp/querieswithexplain.sql
+chmod 644 /tmp/querieswithexplain.sql
+sudo -iu postgres psql -p 5555 -f /tmp/querieswithexplain.sql > POSTGRES15_querieswithexplain2024.2_results_SEED_1_new.txt
 
 ---
 Listing the queries Executed
