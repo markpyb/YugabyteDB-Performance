@@ -23,6 +23,8 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 - Query Parameters used are displayed below 
 
+- <b>Using a Multi-AZ 3 node YB</b>
+
 | Query | Seed(LRows) | PG (6M) | YB (6M) |  | PG (11M) | YB (11M) |
 |-------|-------------|---------|---------|--|----------|----------|
 | Q1.1  | Time        | 47 ms   | 90 ms   |  | 104 ms   | 167 ms   |
