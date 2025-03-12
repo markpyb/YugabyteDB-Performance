@@ -1,0 +1,460 @@
+ query 
+-------
+ Q1.1
+(1 row)
+
+                                                                           QUERY PLAN                                                                           
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual time=242.229..242.229 rows=1 loops=1)
+   ->  YB Batched Nested Loop Join (actual time=8.348..220.562 rows=357647 loops=1)
+         Join Filter: (l.lo_orderdate = d.d_datekey)
+         ->  Index Only Scan using q3_1_d on date_tbl d (actual time=1.862..1.920 rows=365 loops=1)
+               Index Cond: (d_year = 1993)
+               Heap Fetches: 0
+         ->  Index Only Scan using q1_1 on lineorder l (actual time=6.269..126.240 rows=357647 loops=1)
+               Index Cond: ((lo_orderdate = ANY (ARRAY[d.d_datekey, $1, $2, ..., $1999])) AND (lo_discount >= 1) AND (lo_discount <= 3) AND (lo_quantity < 25))
+               Heap Fetches: 0
+ Planning Time: 72.936 ms
+ Execution Time: 242.562 ms
+ Peak Memory Usage: 808 kB
+(12 rows)
+
+ query 
+-------
+ Q1.2
+(1 row)
+
+                                                                                       QUERY PLAN                                                                                        
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual time=16.175..16.175 rows=1 loops=1)
+   ->  YB Batched Nested Loop Join (actual time=8.461..15.386 rows=12694 loops=1)
+         Join Filter: (l.lo_orderdate = d.d_datekey)
+         ->  Index Scan using date_tbl_pkey on date_tbl d (actual time=2.524..2.532 rows=31 loops=1)
+               Storage Filter: (d_yearmonthnum = 199401)
+         ->  Index Only Scan using q1_1 on lineorder l (actual time=5.858..9.559 rows=12694 loops=1)
+               Index Cond: ((lo_orderdate = ANY (ARRAY[d.d_datekey, $1, $2, ..., $1999])) AND (lo_discount >= 4) AND (lo_discount <= 6) AND (lo_quantity >= 26) AND (lo_quantity <= 35))
+               Heap Fetches: 0
+ Planning Time: 0.921 ms
+ Execution Time: 16.385 ms
+ Peak Memory Usage: 612 kB
+(11 rows)
+
+ query 
+-------
+ Q1.3
+(1 row)
+
+                                                                                       QUERY PLAN                                                                                        
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual time=7.736..7.736 rows=1 loops=1)
+   ->  YB Batched Nested Loop Join (actual time=6.329..7.567 rows=2820 loops=1)
+         Join Filter: (l.lo_orderdate = d.d_datekey)
+         ->  Index Scan using date_tbl_pkey on date_tbl d (actual time=2.712..2.716 rows=7 loops=1)
+               Storage Filter: ((d_weeknuminyear = 6) AND (d_year = 1994))
+         ->  Index Only Scan using q1_1 on lineorder l (actual time=3.549..4.072 rows=2820 loops=1)
+               Index Cond: ((lo_orderdate = ANY (ARRAY[d.d_datekey, $1, $2, ..., $1999])) AND (lo_discount >= 5) AND (lo_discount <= 7) AND (lo_quantity >= 26) AND (lo_quantity <= 35))
+               Heap Fetches: 0
+ Planning Time: 0.850 ms
+ Execution Time: 7.954 ms
+ Peak Memory Usage: 612 kB
+(11 rows)
+
+ query 
+-------
+ Q2.1
+(1 row)
+
+                                                         QUERY PLAN                                                         
+----------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=1263.321..1288.067 rows=280 loops=1)
+   Group Key: d.d_year, p.p_brand1
+   ->  Sort (actual time=1263.219..1272.994 rows=148684 loops=1)
+         Sort Key: d.d_year, p.p_brand1
+         Sort Method: quicksort  Memory: 17760kB
+         ->  Hash Join (actual time=27.948..1217.744 rows=148684 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=24.813..1189.853 rows=148684 loops=1)
+                     Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                     ->  YB Batched Nested Loop Join (actual time=21.443..1114.772 rows=715321 loops=1)
+                           Join Filter: (l.lo_partkey = p.p_partkey)
+                           ->  Index Only Scan using q2_1_p on part p (actual time=5.978..10.425 rows=15897 loops=1)
+                                 Index Cond: (p_category = 'MFGR#12'::text)
+                                 Heap Fetches: 0
+                           ->  Index Only Scan using q2_1_l on lineorder l (actual time=11.742..111.380 rows=89415 loops=8)
+                                 Index Cond: (lo_partkey = ANY (ARRAY[p.p_partkey, $1, $2, ..., $1999]))
+                                 Heap Fetches: 0
+                     ->  Hash (actual time=3.312..3.312 rows=1246 loops=1)
+                           Buckets: 2048  Batches: 1  Memory Usage: 60kB
+                           ->  Index Only Scan using q3_1_s on supplier s (actual time=2.895..3.173 rows=1246 loops=1)
+                                 Index Cond: (s_region = 'AMERICA'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=3.083..3.083 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=2.595..2.811 rows=2556 loops=1)
+ Planning Time: 47.889 ms
+ Execution Time: 1288.539 ms
+ Peak Memory Usage: 24829 kB
+(28 rows)
+
+ query 
+-------
+ Q2.2
+(1 row)
+
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=210.145..214.238 rows=56 loops=1)
+   Group Key: d.d_year, p.p_brand1
+   ->  Sort (actual time=210.055..211.476 rows=29004 loops=1)
+         Sort Key: d.d_year, p.p_brand1
+         Sort Method: quicksort  Memory: 3034kB
+         ->  Hash Join (actual time=18.279..203.184 rows=29004 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=15.431..195.412 rows=29004 loops=1)
+                     Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                     ->  YB Batched Nested Loop Join (actual time=12.423..178.221 rows=142421 loops=1)
+                           Join Filter: (l.lo_partkey = p.p_partkey)
+                           ->  Index Only Scan using q2_2_p on part p (actual time=1.767..2.436 rows=3151 loops=1)
+                                 Index Cond: ((p_brand1 >= 'MFGR#2221'::text) AND (p_brand1 <= 'MFGR#2228'::text))
+                                 Heap Fetches: 0
+                           ->  Index Only Scan using q2_1_l on lineorder l (actual time=9.470..66.810 rows=71210 loops=2)
+                                 Index Cond: (lo_partkey = ANY (ARRAY[p.p_partkey, $1, $2, ..., $1999]))
+                                 Heap Fetches: 0
+                     ->  Hash (actual time=2.988..2.988 rows=1227 loops=1)
+                           Buckets: 2048  Batches: 1  Memory Usage: 60kB
+                           ->  Index Only Scan using q3_1_s on supplier s (actual time=2.177..2.743 rows=1227 loops=1)
+                                 Index Cond: (s_region = 'ASIA'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=2.829..2.830 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=2.160..2.427 rows=2556 loops=1)
+ Planning Time: 5.805 ms
+ Execution Time: 214.597 ms
+ Peak Memory Usage: 6693 kB
+(28 rows)
+
+ query 
+-------
+ Q2.3
+(1 row)
+
+                                                        QUERY PLAN                                                        
+--------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=33.464..33.871 rows=7 loops=1)
+   Group Key: d.d_year, p.p_brand1
+   ->  Sort (actual time=33.365..33.535 rows=3429 loops=1)
+         Sort Key: d.d_year
+         Sort Method: quicksort  Memory: 364kB
+         ->  Hash Join (actual time=15.151..32.866 rows=3429 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=12.690..29.901 rows=3429 loops=1)
+                     Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                     ->  YB Batched Nested Loop Join (actual time=10.065..25.574 rows=17712 loops=1)
+                           Join Filter: (l.lo_partkey = p.p_partkey)
+                           ->  Index Only Scan using q2_2_p on part p (actual time=0.810..0.892 rows=402 loops=1)
+                                 Index Cond: (p_brand1 = 'MFGR#2239'::text)
+                                 Heap Fetches: 0
+                           ->  Index Only Scan using q2_1_l on lineorder l (actual time=9.007..19.604 rows=17712 loops=1)
+                                 Index Cond: (lo_partkey = ANY (ARRAY[p.p_partkey, $1, $2, ..., $1999]))
+                                 Heap Fetches: 0
+                     ->  Hash (actual time=2.588..2.588 rows=1162 loops=1)
+                           Buckets: 2048  Batches: 1  Memory Usage: 57kB
+                           ->  Index Only Scan using q3_1_s on supplier s (actual time=2.167..2.456 rows=1162 loops=1)
+                                 Index Cond: (s_region = 'EUROPE'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=2.445..2.445 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=1.997..2.193 rows=2556 loops=1)
+ Planning Time: 1.603 ms
+ Execution Time: 34.190 ms
+ Peak Memory Usage: 1964 kB
+(28 rows)
+
+ query 
+-------
+ Q3.1
+(1 row)
+
+                                                             QUERY PLAN                                                             
+------------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=3018.638..3018.643 rows=150 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 36kB
+   ->  GroupAggregate (actual time=2874.565..3018.537 rows=150 loops=1)
+         Group Key: c.c_nation, s.s_nation, d.d_year
+         ->  Sort (actual time=2873.465..2945.502 rows=673241 loops=1)
+               Sort Key: c.c_nation, s.s_nation, d.d_year
+               Sort Method: external merge  Disk: 21768kB
+               ->  Hash Join (actual time=29.619..2498.052 rows=673241 loops=1)
+                     Hash Cond: (l.lo_orderdate = d.d_datekey)
+                     ->  Hash Join (actual time=25.906..2395.677 rows=739515 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  YB Batched Nested Loop Join (actual time=10.490..1963.570 rows=3681230 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Only Scan using q3_1_s on supplier s (actual time=2.343..2.663 rows=1227 loops=1)
+                                       Index Cond: (s_region = 'ASIA'::text)
+                                       Heap Fetches: 0
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=7.493..918.069 rows=3681230 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=15.356..15.356 rows=18033 loops=1)
+                                 Buckets: 32768  Batches: 1  Memory Usage: 1046kB
+                                 ->  Index Only Scan using q3_1_c on customer c (actual time=7.222..13.078 rows=18033 loops=1)
+                                       Index Cond: (c_region = 'ASIA'::text)
+                                       Heap Fetches: 0
+                     ->  Hash (actual time=3.699..3.699 rows=2192 loops=1)
+                           Buckets: 4096  Batches: 1  Memory Usage: 118kB
+                           ->  Index Scan using date_tbl_pkey on date_tbl d (actual time=3.040..3.478 rows=2192 loops=1)
+                                 Storage Filter: ((d_year >= 1992) AND (d_year <= 1997))
+ Planning Time: 23.882 ms
+ Execution Time: 3020.429 ms
+ Peak Memory Usage: 77700 kB
+(32 rows)
+
+ query 
+-------
+ Q3.2
+(1 row)
+
+                                                            QUERY PLAN                                                             
+-----------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=507.203..507.222 rows=600 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 71kB
+   ->  GroupAggregate (actual time=502.717..506.908 rows=600 loops=1)
+         Group Key: c.c_city, s.s_city, d.d_year
+         ->  Sort (actual time=502.696..503.955 rows=27281 loops=1)
+               Sort Key: c.c_city, s.s_city, d.d_year
+               Sort Method: quicksort  Memory: 2900kB
+               ->  Hash Join (actual time=36.711..488.792 rows=27281 loops=1)
+                     Hash Cond: (l.lo_orderdate = d.d_datekey)
+                     ->  Hash Join (actual time=33.585..481.254 rows=29964 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  YB Batched Nested Loop Join (actual time=8.188..393.924 rows=733070 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Scan using supplier_pkey on supplier s (actual time=2.053..2.115 rows=245 loops=1)
+                                       Storage Filter: ((s_nation)::text = 'UNITED STATES'::text)
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=5.920..184.310 rows=733070 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=25.372..25.372 rows=3629 loops=1)
+                                 Buckets: 4096  Batches: 1  Memory Usage: 203kB
+                                 ->  Index Scan using customer_pkey on customer c (actual time=24.268..24.996 rows=3629 loops=1)
+                                       Storage Filter: ((c_nation)::text = 'UNITED STATES'::text)
+                     ->  Hash (actual time=3.114..3.115 rows=2192 loops=1)
+                           Buckets: 4096  Batches: 1  Memory Usage: 118kB
+                           ->  Index Scan using date_tbl_pkey on date_tbl d (actual time=2.432..2.876 rows=2192 loops=1)
+                                 Storage Filter: ((d_year >= 1992) AND (d_year <= 1997))
+ Planning Time: 1.555 ms
+ Execution Time: 507.566 ms
+ Peak Memory Usage: 6931 kB
+(30 rows)
+
+ query 
+-------
+ Q3.3
+(1 row)
+
+                                                             QUERY PLAN                                                             
+------------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=3087.570..3088.112 rows=15000 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 1556kB
+   ->  GroupAggregate (actual time=2964.696..3078.447 rows=15000 loops=1)
+         Group Key: c.c_city, s.s_city, d.d_year
+         ->  Sort (actual time=2964.678..3008.460 rows=646259 loops=1)
+               Sort Key: c.c_city, s.s_city, d.d_year
+               Sort Method: external merge  Disk: 26568kB
+               ->  Hash Join (actual time=46.905..2402.742 rows=646259 loops=1)
+                     Hash Cond: (l.lo_orderdate = d.d_datekey)
+                     ->  Hash Join (actual time=43.337..2304.043 rows=709625 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  YB Batched Nested Loop Join (actual time=10.588..1877.379 rows=3538883 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Scan using supplier_pkey on supplier s (actual time=2.784..3.042 rows=1180 loops=1)
+                                       Storage Filter: ("substring"((s_phone)::text, 1, 1) = '3'::text)
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=7.225..876.073 rows=3538883 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=32.725..32.726 rows=17949 loops=1)
+                                 Buckets: 32768 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 1098kB
+                                 ->  Index Scan using customer_pkey on customer c (actual time=12.365..30.805 rows=17949 loops=1)
+                                       Storage Filter: ("substring"((c_phone)::text, 1, 1) = '3'::text)
+                     ->  Hash (actual time=3.557..3.558 rows=2192 loops=1)
+                           Buckets: 4096  Batches: 1  Memory Usage: 118kB
+                           ->  Index Scan using date_tbl_pkey on date_tbl d (actual time=2.872..3.316 rows=2192 loops=1)
+                                 Storage Filter: ((d_year >= 1992) AND (d_year <= 1997))
+ Planning Time: 1.524 ms
+ Execution Time: 3090.841 ms
+ Peak Memory Usage: 77189 kB
+(30 rows)
+
+ query 
+-------
+ Q3.4
+(1 row)
+
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=86.922..86.922 rows=6 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 25kB
+   ->  GroupAggregate (actual time=86.877..86.912 rows=6 loops=1)
+         Group Key: c.c_city, s.s_city, d.d_year
+         ->  Sort (actual time=86.860..86.871 rows=294 loops=1)
+               Sort Key: d.d_year
+               Sort Method: quicksort  Memory: 47kB
+               ->  Hash Join (actual time=35.009..86.779 rows=294 loops=1)
+                     Hash Cond: (l.lo_orderdate = d.d_datekey)
+                     ->  Hash Join (actual time=31.533..83.197 rows=317 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  YB Batched Nested Loop Join (actual time=7.305..52.869 rows=87242 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Scan using supplier_pkey on supplier s (actual time=2.179..2.187 rows=29 loops=1)
+                                       Storage Filter: ((s_city)::text = 'UNITED KI1'::text)
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=5.043..26.127 rows=87242 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=24.120..24.121 rows=330 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 24kB
+                                 ->  Index Scan using customer_pkey on customer c (actual time=23.991..24.061 rows=330 loops=1)
+                                       Storage Filter: ((c_city)::text = 'UNITED KI1'::text)
+                     ->  Hash (actual time=3.466..3.466 rows=2192 loops=1)
+                           Buckets: 4096  Batches: 1  Memory Usage: 118kB
+                           ->  Index Scan using date_tbl_pkey on date_tbl d (actual time=2.801..3.246 rows=2192 loops=1)
+                                 Storage Filter: ((d_year >= 1992) AND (d_year <= 1997))
+ Planning Time: 1.639 ms
+ Execution Time: 87.177 ms
+ Peak Memory Usage: 1525 kB
+(30 rows)
+
+ query 
+-------
+ Q4.1
+(1 row)
+
+                                                             QUERY PLAN                                                             
+------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=2778.342..2801.009 rows=35 loops=1)
+   Group Key: d.d_year, c.c_nation
+   ->  Sort (actual time=2777.729..2785.680 rows=149799 loops=1)
+         Sort Key: d.d_year, c.c_nation
+         Sort Method: quicksort  Memory: 17848kB
+         ->  Hash Join (actual time=66.155..2742.025 rows=149799 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=63.640..2711.374 rows=149799 loops=1)
+                     Hash Cond: (l.lo_custkey = c.c_custkey)
+                     ->  Hash Join (actual time=50.294..2557.798 rows=747445 loops=1)
+                           Hash Cond: (l.lo_partkey = p.p_partkey)
+                           ->  YB Batched Nested Loop Join (actual time=9.826..1858.384 rows=3738260 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Only Scan using q3_1_s on supplier s (actual time=1.866..2.157 rows=1246 loops=1)
+                                       Index Cond: (s_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=7.336..869.398 rows=3738260 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=40.097..40.097 rows=79994 loops=1)
+                                 Buckets: 131072  Batches: 1  Memory Usage: 3837kB
+                                 ->  Index Only Scan using q4_1_p on part p (actual time=4.767..28.208 rows=79994 loops=1)
+                                       Index Cond: (p_mfgr = 'MFGR#1'::text)
+                                       Heap Fetches: 0
+                     ->  Hash (actual time=13.311..13.311 rows=18012 loops=1)
+                           Buckets: 32768  Batches: 1  Memory Usage: 1073kB
+                           ->  Index Only Scan using q3_1_c on customer c (actual time=4.508..11.021 rows=18012 loops=1)
+                                 Index Cond: (c_region = 'AMERICA'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=2.504..2.504 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=2.059..2.265 rows=2556 loops=1)
+ Planning Time: 4.077 ms
+ Execution Time: 2801.467 ms
+ Peak Memory Usage: 32891 kB
+(35 rows)
+
+ query 
+-------
+ Q4.2
+(1 row)
+
+                                                             QUERY PLAN                                                             
+------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=2943.823..2997.367 rows=350 loops=1)
+   Group Key: d.d_year, s.s_nation, p.p_category
+   ->  Sort (actual time=2943.638..2960.835 rows=299569 loops=1)
+         Sort Key: d.d_year, s.s_nation, p.p_category
+         Sort Method: quicksort  Memory: 35692kB
+         ->  Hash Join (actual time=162.015..2827.277 rows=299569 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=159.053..2776.054 rows=299569 loops=1)
+                     Hash Cond: (l.lo_partkey = p.p_partkey)
+                     ->  Hash Join (actual time=19.588..2372.990 rows=750198 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  YB Batched Nested Loop Join (actual time=9.625..1925.926 rows=3738260 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Only Scan using q3_1_s on supplier s (actual time=2.006..2.341 rows=1246 loops=1)
+                                       Index Cond: (s_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=6.928..869.295 rows=3738260 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=9.919..9.919 rows=18012 loops=1)
+                                 Buckets: 32768  Batches: 1  Memory Usage: 890kB
+                                 ->  Index Only Scan using q3_1_c on customer c (actual time=3.265..8.001 rows=18012 loops=1)
+                                       Index Cond: (c_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                     ->  Hash (actual time=139.061..139.061 rows=159946 loops=1)
+                           Buckets: 262144  Batches: 1  Memory Usage: 8921kB
+                           ->  Index Scan using part_pkey on part p (actual time=5.992..110.684 rows=159946 loops=1)
+                                 Storage Filter: (((p_mfgr)::text = 'MFGR#1'::text) OR ((p_mfgr)::text = 'MFGR#2'::text))
+               ->  Hash (actual time=2.950..2.950 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=2.487..2.703 rows=2556 loops=1)
+ Planning Time: 2.552 ms
+ Execution Time: 2997.924 ms
+ Peak Memory Usage: 53482 kB
+(34 rows)
+
+ query 
+-------
+ Q4.3
+(1 row)
+
+                                                            QUERY PLAN                                                             
+-----------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=719.020..730.260 rows=23939 loops=1)
+   Group Key: d.d_year, s.s_city, p.p_brand1
+   ->  Sort (actual time=719.009..721.692 rows=58734 loops=1)
+         Sort Key: d.d_year, s.s_city, p.p_brand1
+         Sort Method: quicksort  Memory: 6125kB
+         ->  Hash Join (actual time=160.730..678.593 rows=58734 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=157.758..666.060 rows=58734 loops=1)
+                     Hash Cond: (l.lo_partkey = p.p_partkey)
+                     ->  Hash Join (actual time=17.971..475.655 rows=147605 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  YB Batched Nested Loop Join (actual time=7.344..380.501 rows=733070 loops=1)
+                                 Join Filter: (s.s_suppkey = l.lo_suppkey)
+                                 ->  Index Scan using supplier_pkey on supplier s (actual time=2.096..2.149 rows=245 loops=1)
+                                       Storage Filter: ((s_nation)::text = 'UNITED STATES'::text)
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=5.049..171.562 rows=733070 loops=1)
+                                       Index Cond: (lo_suppkey = ANY (ARRAY[s.s_suppkey, $1, $2, ..., $1999]))
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=10.580..10.580 rows=18012 loops=1)
+                                 Buckets: 32768  Batches: 1  Memory Usage: 890kB
+                                 ->  Index Only Scan using q3_1_c on customer c (actual time=3.477..8.518 rows=18012 loops=1)
+                                       Index Cond: (c_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                     ->  Hash (actual time=139.248..139.248 rows=159946 loops=1)
+                           Buckets: 262144  Batches: 1  Memory Usage: 9546kB
+                           ->  Index Scan using part_pkey on part p (actual time=6.070..110.604 rows=159946 loops=1)
+                                 Storage Filter: (((p_mfgr)::text = 'MFGR#1'::text) OR ((p_mfgr)::text = 'MFGR#2'::text))
+               ->  Hash (actual time=2.962..2.962 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=2.519..2.717 rows=2556 loops=1)
+ Planning Time: 2.445 ms
+ Execution Time: 731.792 ms
+ Peak Memory Usage: 24486 kB
+(33 rows)
+
+
