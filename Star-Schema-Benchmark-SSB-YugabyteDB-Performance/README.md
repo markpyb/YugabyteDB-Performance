@@ -2,7 +2,7 @@
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB
 
-| Query | Seed (Rows) |   1 (6M)   |  2 (11M)   |  3 (17M)   | 10 (60M)  |
+| Query | Seed(LRows) |   1 (6M)   |  2 (11M)   |  3 (17M)   | 10 (60M)  |
 |-------|-------------|------------|------------|------------|-----------|
 | Q1.1  | Time        | 162 ms     | 296 ms     | 242 ms     | 624 ms    |
 | Q1.2  | Time        | 8 ms       | 14 ms      | 16 ms      | 28 ms     |
