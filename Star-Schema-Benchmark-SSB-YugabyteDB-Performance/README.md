@@ -7,11 +7,12 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - Queries executed against YugabyteDB demonstrate near-linear scalability as the dataset (lineorder table rows) increases from 6 million to 60 million rows.
 
 Note:
-Work in progress
+
+<b>Work in progress</b>
 I tested different join orders for Seed1, then just extrapolated that same join order through to Seed 10
 I'm not familiar with this benchmark, this is my first time running it, so feedback welcome for improving, or ill get back ground to digging into it more.
 
-Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB Using 
+Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB  
 
 | Query | Seed(LRows) |   1 (6M)   |  2 (11M)   |  3 (17M)   | 10 (60M)  |
 |-------|-------------|------------|------------|------------|-----------|
