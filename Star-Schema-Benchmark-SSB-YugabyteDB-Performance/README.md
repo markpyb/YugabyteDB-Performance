@@ -192,7 +192,7 @@ ysqlsh -h 10.0.0.61 -c "\i querieswithexplain.sql" > querieswithexplain2024.2_re
 PG
 ---
 
-
+```
 sudo yum install postgresql15-server -y
 sudo /usr/pgsql-15/bin/postgresql-15-setup initdb
 sudo sed -i -e "s/^#*port = .*/port = 5555/" -e "s/^#*listen_addresses = .*/listen_addresses = '*'/" /var/lib/pgsql/15/data/postgresql.conf
@@ -200,7 +200,9 @@ sudo systemctl enable postgresql-15
 sudo systemctl start postgresql-15
 sudo systemctl status postgresql-15
 sudo -iu postgres psql -p 5555
+```
 
+```
 rm -f *.tbl
 ./dbgen -s 1 -T c
 ./dbgen -s 1 -T p
@@ -217,10 +219,11 @@ sudo -iu postgres psql -p 5555 -f /tmp/schema_and_data_PG.sql
 cp querieswithexplain.sql /tmp/querieswithexplain.sql
 chmod 644 /tmp/querieswithexplain.sql
 sudo -iu postgres psql -p 5555 -f /tmp/querieswithexplain.sql > POSTGRES15_querieswithexplain2024.2_results_SEED_1_new.txt
+```
 
 ---
 
-
+```
 rm -f *.tbl
 ./dbgen -s 2 -T c
 ./dbgen -s 2 -T p
@@ -232,6 +235,7 @@ cp *.tbl /tmp
 
 sudo -iu postgres psql -p 5555 -f /tmp/schema_and_data_PG.sqll
 sudo -iu postgres psql -p 5555 -f /tmp/querieswithexplain.sql > POSTGRES15_querieswithexplain2024.2_results_SEED_2_new.txt 
+```
 
 ---
 
