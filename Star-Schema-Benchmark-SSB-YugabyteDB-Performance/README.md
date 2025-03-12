@@ -7,16 +7,16 @@ Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB
 | Q1.1  | Time        | 162 ms     | 296 ms     | 242 ms     | 624 ms    |
 | Q1.2  | Time        | 8 ms       | 14 ms      | 16 ms      | 28 ms     |
 | Q1.3  | Time        | 3 ms       | 6 ms       | 8 ms       | 12 ms     |
-| Q2.1  | Time        | 92 ms      | 296 ms     | (1.2 s)    | (2.0 s)   |
+| Q2.1  | Time        | 92 ms      | 296 ms     | 1.2 s      | 2.0 s     |
 | Q2.2  | Time        | 92 ms      | 169 ms     | 214 ms     | 428 ms    |
 | Q2.3  | Time        | 17 ms      | 27 ms      | 34 ms      | 65 ms     |
-| Q3.1  | Time        | 833 ms     | (2.1 s)    | (3.0 s)    | (9.7 s)   |
-| Q3.2  | Time        | 138 ms     | 354 ms     | 507 ms     | (1.7 s)   |
-| Q3.3  | Time        | 859 ms     | (2.2 s)    | (3.0 s)    | (12.0 s)  |
+| Q3.1  | Time        | 833 ms     | 2.1 s      | 3.0 s      | 9.7 s     |
+| Q3.2  | Time        | 138 ms     | 354 ms     | 507 ms     | 1.7 s     |
+| Q3.3  | Time        | 859 ms     | 2.2 s      | 3.0 s      | 12.0 s    |
 | Q3.4  | Time        | 33 ms      | 69 ms      | 87 ms      | 245 ms    |
-| Q4.1  | Time        | 833 ms     | (2.1 s)    | (2.8 s)    | (10.8 s)  |
-| Q4.2  | Time        | 731 ms     | (2.1 s)    | (2.9 s)    | (11.8 s)  |
-| Q4.3  | Time        | 185 ms     | 485 ms     | 731 ms     | (2.4 s)   |
+| Q4.1  | Time        | 833 ms     | 2.1 s      | 2.8 s      | 10.8 s    |
+| Q4.2  | Time        | 731 ms     | 2.1 s      | 2.9 s      | 11.8 s    |
+| Q4.3  | Time        | 185 ms     | 485 ms     | 731 ms     | 2.4 s     |
 
 ---
 
