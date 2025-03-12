@@ -16,6 +16,7 @@ I only tested different join orders for Seed 1 and applied the same join order f
 - check execution plans are optimal from indexing or if i should be looking at a different join order or plan
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB  
+- Query Parameters used are displayed below 
 
 | Query | Seed(LRows) |   1 (6M)   |  2 (11M)   |  3 (17M)   | 10 (60M)  |
 |-------|-------------|------------|------------|------------|-----------|
