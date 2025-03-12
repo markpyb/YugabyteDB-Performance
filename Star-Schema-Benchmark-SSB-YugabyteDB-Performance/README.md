@@ -5,9 +5,9 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - Standard SSB schema (normalized to SSB standards).
 - No extra denormalization or restructuring done yet specifically for performance. 
 
-Note:
 
-<b>Work in progress</b>
+
+<b>Note: Work in progress</b>
 
 I only tested different join orders for Seed 1 and applied the same join order for Seeds 2, 3, and 10. This was my first run of this benchmark, so I’m open to suggestions for improvements.
 
