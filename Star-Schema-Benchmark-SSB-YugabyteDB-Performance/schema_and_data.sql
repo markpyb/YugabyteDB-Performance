@@ -112,5 +112,6 @@ set yb_disable_transactional_writes=off;
 alter database yugabyte set yb_enable_base_scans_cost_model=true; 
 alter database yugabyte set work_mem='64MB';
 alter database yugabyte set yb_fetch_row_limit=7000;
+alter database yugabyte set enable_nestloop=off;
 \c yugabyte
 analyze;
