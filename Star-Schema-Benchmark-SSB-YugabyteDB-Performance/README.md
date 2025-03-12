@@ -1,6 +1,9 @@
 # Running SSB (Star Schema Benchmark) on YugabyteDB
 
-Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB
+- Standard SSB schema (normalized to SSB standards).
+- No extra denormalization or restructuring done yet specifically for performance.
+
+Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB Using 
 
 | Query | Seed(LRows) |   1 (6M)   |  2 (11M)   |  3 (17M)   | 10 (60M)  |
 |-------|-------------|------------|------------|------------|-----------|
