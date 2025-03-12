@@ -103,7 +103,7 @@ rm -f *.tbl
 ./dbgen -s 1 -T d
 ./dbgen -s 1 -T l
 sed -i 's/,$//' *.tbl
-export PGPASSWORD="Yuga2021PoC!"
+export PGPASSWORD="pw!"
 ysqlsh -h 10.0.0.61 -c "\i schema_and_data.sql"
 ysqlsh -h 10.0.0.61 -c "\i querieswithexplain.sql" > querieswithexplain2024.2_results_SEED_1_new.txt
 ```
@@ -123,7 +123,7 @@ rm -f *.tbl
 ./dbgen -s 2 -T d
 ./dbgen -s 2 -T l
 sed -i 's/,$//' *.tbl
-export PGPASSWORD="Yuga2021PoC!"
+export PGPASSWORD="pw!"
 ysqlsh -h 10.0.0.61 -c "\i schema_and_data.sql"
 ysqlsh -h 10.0.0.61 -c "\i querieswithexplain.sql" > querieswithexplain2024.2_results_SEED_2_new.txt
 ```
@@ -143,7 +143,7 @@ rm -f *.tbl
 ./dbgen -s 3 -T d
 ./dbgen -s 3 -T l
 sed -i 's/,$//' *.tbl
-export PGPASSWORD="Yuga2021PoC!"
+export PGPASSWORD="pw!"
 ysqlsh -h 10.0.0.61 -c "\i schema_and_data.sql"
 ysqlsh -h 10.0.0.61 -c "\i querieswithexplain.sql" > querieswithexplain2024.2_results_SEED_3_new.txt
 ```
@@ -163,7 +163,7 @@ rm -f *.tbl
 ./dbgen -s 10 -T d
 ./dbgen -s 10 -T l
 sed -i 's/,$//' *.tbl
-export PGPASSWORD="Yuga2021PoC!"
+export PGPASSWORD="pw!"
 ysqlsh -h 10.0.0.61 -c "\i schema_and_data.sql"
 ysqlsh -h 10.0.0.61 -c "\i querieswithexplain.sql" > querieswithexplain2024.2_results_SEED_10_new.txt
 ```
