@@ -10,7 +10,7 @@ Note:
 
 <b>Work in progress</b>
 
-I tested different join orders for Seed 1 and applied the same join order for Seeds 2, 3, and 10. This was my first run of this benchmark, so I’m open to suggestions for improvements.
+I only tested different join orders for Seed 1 and applied the same join order for Seeds 2, 3, and 10. This was my first run of this benchmark, so I’m open to suggestions for improvements.
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB  
 
