@@ -18,35 +18,37 @@ Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB
 | Q4.2  | Time        | 731 ms     | (2.1 s)    | (2.9 s)    | (11.8 s)  |
 | Q4.3  | Time        | 185 ms     | 485 ms     | 731 ms     | (2.4 s)   |
 
-Environment:
+---
 
-YugabyteDB 2024.2.0 (Stable)
+## Summary of Test Environment:
 
-3-node, RF=3 cluster
+- YugabyteDB 2024.2
+- Deployed on a 3-node cluster in public cloud
+- Fault tolerance: Survives complete loss of one availability zone
+- Replication factor: 3
 
-Zone-level fault tolerance (survive loss of 1 AZ)
+---
 
-Repository Contents:
+## Repository Contents:
 
-Schema definitions and indexing strategy
+- Database schema and index definitions
+- Data generation scripts (`dbgen`)
+- Load procedures
+- Benchmark queries with detailed execution plans
 
-Data generation scripts
+---
 
-Data-loading procedures
+## Additional Notes:
 
-Benchmark query execution plans
+- Current indexing is a first draft by me: a deeper look into it planned for later.
+- Results highlight YugabyteDB’s effectiveness at distributed JOINs and aggregations and great performance with PostgreSQL API
+- Ideal for mixed OLTP/OLAP/HTAP scenarios, enabling single-database solutions.
 
-Notes:
+---
 
-Indexing is currently optimized for reasonable performance. Additional tuning is planned.
+### Contributing:
 
-Results demonstrate effective distributed JOIN and aggregation performance comparable to PostgreSQL.
-
-YugabyteDB is well-suited for mixed OLAP/OLTP workloads like financial reporting.
-
-Contributions Welcome:
-
-Feel free to contribute improvements to indexing, run benchmarks on newer versions, or scale tests with larger datasets and clusters. Future tests will explore larger seeds and additional optimization strategies
+Improvements and optimizations are welcome! (indexing, hinting, GUC setting) 
 
 ---
 My intallation route on redhat.
