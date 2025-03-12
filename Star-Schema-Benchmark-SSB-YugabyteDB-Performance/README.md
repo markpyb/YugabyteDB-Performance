@@ -4,8 +4,8 @@
 - No extra denormalization or restructuring done yet specifically for performance. 
 - Queries executed against YugabyteDB demonstrate near-linear scalability as the dataset (lineorder table rows) increases from 6 million to 60 million rows.
 
-- Note:
-- Work in progress, cant guarantee i've indexed it correctly yet as this is just my first run through before i go to higher seeds
+Note:
+Work in progress, cant guarantee i've indexed it correctly yet as this is just my first run through before i go to higher seeds
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB Using 
 
