@@ -22,7 +22,7 @@ Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 |-------|-------------|------------|---------|---------|---------|-----------|
 | Q1.1  | Time        | 90 ms      | 47 ms   | 167 ms  | 242 ms  | 624 ms    |
 | Q1.2  | Time        | 8 ms       | 2 ms    | 12 ms   | 16 ms   | 28 ms     |
-| Q1.3  | Time        | 5 ms       | 0 ms    | 6 ms    | 8 ms    | 12 ms     |
+| Q1.3  | Time        | 5 ms       | 1 ms    | 6 ms    | 8 ms    | 12 ms     |
 | Q2.1  | Time        | 256 ms     | 94 ms   | 660 ms  | 1.2 s   | 2.0 s     |
 | Q2.2  | Time        | 65 ms      | 29 ms   | 130 ms  | 214 ms  | 428 ms    |
 | Q2.3  | Time        | 15 ms      | 5 ms    | 24 ms   | 34 ms   | 65 ms     |
