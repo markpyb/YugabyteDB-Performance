@@ -7,7 +7,7 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - Queries executed against YugabyteDB demonstrate near-linear scalability as the dataset (lineorder table rows) increases from 6 million to 60 million rows.
 
 Note:
-Work in progress, cant guarantee i've indexed it correctly yet as this is just my first run through before i go to higher seeds
+Work in progress
 I tested different join orders for Seed1, then just extrapolated that same join order through to Seed 10
 I'm not familiar with this benchmark, this is my first time running it, so feedback welcome for improving, or ill get back ground to digging into it more.
 
