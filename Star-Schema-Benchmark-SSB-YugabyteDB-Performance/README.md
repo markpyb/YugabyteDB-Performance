@@ -1,43 +1,54 @@
 # Running SSB (Star Schema Benchmark) on YugabyteDB
 
-Summary Of Great Performance Results:
+Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB
 
-Here’s the revised table clearly referencing the fact table size (lineorder table row counts) and converting Seed 10 execution times into seconds, as requested:
+Performance Results:
 
-| Query | Seed 1 (6M rows) | Seed 2 (11M rows) | Seed 3 (17M rows) | Seed 10 (60M rows) |
-|-------|------------------|-------------------|-------------------|--------------------|
-| Q1.1  | 162 ms           | 296 ms            | 242 ms            | 624 ms             |
-| Q1.2  | 8 ms             | 14 ms             | 16 ms             | 28 ms              |
-| Q1.3  | 3 ms             | 6 ms              | 7 ms              | 11 ms              |
-| Q2.1  | 487 ms           | 805 ms            | 1288 ms (1.2 s)   | 2060 ms (2.0 s)    |
-| Q2.2  | 92 ms            | 169 ms            | 214 ms            | 428 ms             |
-| Q2.3  | 17 ms            | 27 ms             | 34 ms             | 65 ms              |
-| Q3.1  | 833 ms           | 2115 ms (2.1 s)   | 3020 ms (3.0 s)   | 9664 ms (9.6 s)    |
-| Q3.2  | 138 ms           | 354 ms            | 507 ms            | 1667 ms (1.6 s)    |
-| Q3.3  | 859 ms           | 2222 ms (2.2 s)   | 3090 ms (3.0 s)   | 12091 ms (12.0 s)  |
-| Q3.4  | 33 ms            | 69 ms             | 87 ms             | 245 ms             |
-| Q4.1  | 772 ms           | 1854 ms (1.8 s)   | 2801 ms (2.8 s)   | 10886 ms (10.8 s)  |
-| Q4.2  | 731 ms           | 2121 ms (2.1 s)   | 2997 ms (2.9 s)   | 11899 ms (11.8 s)  |
-| Q4.3  | 185 ms           | 485 ms            | 731 ms            | 2433 ms (2.4 s)    |
+| Query | Rows | Seed (1) | Seed (2) | Seed (3) | Seed (10) |
+|-------|-----------|-----------|-----------|-----------|------------|
+| Q1.1  | 6,001,215 | 162 ms    | 296 ms    | 242 ms    | 624 ms     |
+| Q1.2  | 6,001,215 | 8 ms      | 14 ms     | 16 ms     | 28 ms      |
+| Q1.3  | 6,001,215 | 3 ms      | 6 ms      | 8 ms      | 12 ms      |
+| Q2.1  | 6,001,215 | 487 ms    | 805 ms    | 1288 ms   | 2.1 s      |
+| Q2.2  | 6,001,215 | 92 ms     | 169 ms    | 214 ms    | 429 ms     |
+| Q2.3  | 6,001,215 | 17 ms     | 27 ms     | 34 ms     | 65 ms      |
+| Q3.1  | 6,001,215 | 833 ms    | 2.1 s     | 3.0 s     | 9.7 s      |
+| Q3.2  | 6,001,215 | 349 ms    | 355 ms    | 508 ms    | 1.7 s      |
+| Q3.3  | 6,001,215 | 859 ms    | 2.2 s     | 3.1 s     | 12.1 s     |
+| Q3.4  | 6,001,215 | 33 ms     | 69 ms     | 87 ms     | 245 ms     |
+| Q4.1  | 6,001,215 | 834 ms    | 1.9 s     | 2.8 s     | 10.9 s     |
+| Q4.2  | 6,001,215 | 730 ms    | 2.1 s     | 3.0 s     | 11.9 s     |
+| Q4.3  | 6,001,215 | 185 ms    | 485 ms    | 732 ms    | 2.4 s      |
 
-This repository contains the schema definitions, indexing, data creation, data-loading, and performance execution plans for running the Star Schema Benchmark (SSB) on YugabyteDB's YSQL (PostgreSQL) Query Layer.
+Environment:
 
-The executions were performed on a 3 node, RF3 cluster with fault tolerance to be able to completely lose one availability zone in a public cloud and continue running.
+YugabyteDB 2024.2.0 (Stable)
 
-Because I started with just the data-gen and the table schema, the Indexes are a work in progress. I just indexed to the point of reasonable result and plan to return back to optimise further.
+3-node, RF=3 cluster
 
+Zone-level fault tolerance (survive loss of 1 AZ)
 
-Performance Summary:
+Repository Contents:
 
-Queries demonstrate good execution times and optimized execution plans, showing YugabyteDB's distributed cost based optimiser achieves the same execution strategies as the relevant postgres version.
+Schema definitions and indexing strategy
 
-Overall, the benchmark highlights YugabyteDB's strong performance, especially in distributed JOIN and aggregation workloads, making it suitable for financial reporting similar to SSB, which often comes hand in hand with an OLTP system.  This is a common ask for an entire business moving all of their databases to YugabyteDB.
+Data generation scripts
 
-This repository provides a complete, reproducible example for developers aiming to benchmark or optimize query performance on YugabyteDB.
+Data-loading procedures
 
-Please contribute if you would like to improve the indexing or run the benchmark on later version, or with more nodes and a large seeded dataset. Otherwise i will come back to the latter part and run this later with larger seed data. 
+Benchmark query execution plans
 
-Note that I used YugabyteDB 2024.2.0 which is the base release of the latest stable. Master or preview branch is likely to improve further. Will test the same 
+Notes:
+
+Indexing is currently optimized for reasonable performance. Additional tuning is planned.
+
+Results demonstrate effective distributed JOIN and aggregation performance comparable to PostgreSQL.
+
+YugabyteDB is well-suited for mixed OLAP/OLTP workloads like financial reporting.
+
+Contributions Welcome:
+
+Feel free to contribute improvements to indexing, run benchmarks on newer versions, or scale tests with larger datasets and clusters. Future tests will explore larger seeds and additional optimization strategies
 
 ---
 My intallation route on redhat.
