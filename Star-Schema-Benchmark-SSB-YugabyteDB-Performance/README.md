@@ -23,21 +23,41 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 - Query Parameters used are displayed below 
 
-| Query | Seed(LRows) | PG (6M) | YB (6M) |  | PG (11M) | YB (11M) |  | YB (17M) | YB (60M) |
-|-------|-------------|---------|---------|--|----------|----------|--|-----------|-----------|
-| Q1.1  | Time        | 47 ms   | 90 ms   |  | 104 ms   | 167 ms   |  | 242 ms    | 624 ms    |
-| Q1.2  | Time        | 2 ms    | 8 ms    |  | 6 ms     | 12 ms    |  | 16 ms     | 28 ms     |
-| Q1.3  | Time        | 1 ms    | 5 ms    |  | 1 ms     | 6 ms     |  | 8 ms      | 12 ms     |
-| Q2.1  | Time        | 94 ms   | 256 ms  |  | 173 ms   | 660 ms   |  | 1.2 s     | 2.0 s     |
-| Q2.2  | Time        | 29 ms   | 65 ms   |  | 53 ms    | 130 ms   |  | 214 ms    | 428 ms    |
-| Q2.3  | Time        | 5 ms    | 15 ms   |  | 47 ms    | 24 ms    |  | 34 ms     | 65 ms     |
-| Q3.1  | Time        | 483 ms  | 1 s     |  | 665 ms   | 2 s      |  | 3.0 s     | 9.7 s     |
-| Q3.2  | Time        | 83 ms   | 167 ms  |  | 190 ms   | 354 ms   |  | 507 ms    | 1.7 s     |
-| Q3.3  | Time        | 1222 ms | 1 s     |  | 2.4 s    | 2.1 s    |  | 3.0 s     | 12.0 s    |
-| Q3.4  | Time        | 11 ms   | 45 ms   |  | 24 ms    | 69 ms    |  | 87 ms     | 245 ms    |
-| Q4.1  | Time        | 483 ms  | 795 ms  |  | 1.2 s    | 1.8 s    |  | 2.8 s     | 10.8 s    |
-| Q4.2  | Time        | 537 ms  | 914 ms  |  | 1.3 s    | 2.1 s    |  | 2.9 s     | 11.8 s    |
-| Q4.3  | Time        | 183 ms  | 266 ms  |  | 493 ms   | 485 ms   |  | 731 ms    | 2.4 s     |
+| Query | Seed(LRows) | PG (6M) | YB (6M) |  | PG (11M) | YB (11M) |
+|-------|-------------|---------|---------|--|----------|----------|
+| Q1.1  | Time        | 47 ms   | 90 ms   |  | 104 ms   | 167 ms   |
+| Q1.2  | Time        | 2 ms    | 8 ms    |  | 6 ms     | 12 ms    |
+| Q1.3  | Time        | 1 ms    | 5 ms    |  | 1 ms     | 6 ms     |
+| Q2.1  | Time        | 94 ms   | 256 ms  |  | 173 ms   | 660 ms   |
+| Q2.2  | Time        | 29 ms   | 65 ms   |  | 53 ms    | 130 ms   |
+| Q2.3  | Time        | 5 ms    | 15 ms   |  | 47 ms    | 24 ms    |
+| Q3.1  | Time        | 483 ms  | 1 s     |  | 665 ms   | 2 s      |
+| Q3.2  | Time        | 83 ms   | 167 ms  |  | 190 ms   | 354 ms   |
+| Q3.3  | Time        | 1222 ms | 1 s     |  | 2485 ms  | 2.1 s    |
+| Q3.4  | Time        | 11 ms   | 45 ms   |  | 24 ms    | 69 ms    |
+| Q4.1  | Time        | 483 ms  | 795 ms  |  | 1233 ms  | 1.8 s    |
+| Q4.2  | Time        | 537 ms  | 914 ms  |  | 1248 ms  | 2.1 s    |
+| Q4.3  | Time        | 183 ms  | 266 ms  |  | 493 ms   | 485 ms   |
+
+## My TODO
+
+- Run 17M and 60M on PG
+
+| Query | Seed(LRows) | YB (17M) | YB (60M) |
+|-------|-------------|----------|-----------|
+| Q1.1  | Time        | 242 ms   | 624 ms    |
+| Q1.2  | Time        | 16 ms    | 28 ms     |
+| Q1.3  | Time        | 1 ms     | 5 ms      |
+| Q2.1  | Time        | 1.2 s    | 2.0 s     |
+| Q2.2  | Time        | 214 ms   | 428 ms    |
+| Q2.3  | Time        | 47 ms    | 24 ms     |
+| Q3.1  | Time        | 3.0 s    | 9.7 s     |
+| Q3.2  | Time        | 507 ms   | 1.7 s     |
+| Q3.3  | Time        | 731 ms   | 2.4 s     |
+| Q3.4  | Time        | 87 ms    | 245 ms    |
+| Q4.1  | Time        | 2.8 s    | 10.8 s    |
+| Q4.2  | Time        | 2.9 s    | 11.8 s    |
+| Q4.3  | Time        | 731 ms   | 2.4 s     |
 
 ---
 
