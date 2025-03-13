@@ -24,23 +24,24 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 - Query Parameters used are displayed below 
 
-- <b>Using a Multi-AZ 3 node YB</b>
+- <b>Using a Multi-AZ 3 node 16CPU m7i YBs</b>
+- <b>Using a One node 16CPU m7i PG15, Assuming that it would need replicas of the same size for HA/DR</b>
 
 | Query | Seed(LRows) | PG (6M) | YB (6M) |  | PG (11M) | YB (11M) |
 |-------|-------------|---------|---------|--|----------|----------|
-| Q1.1  | Time        | 47 ms   | 90 ms   |  | 104 ms   | 167 ms   |
-| Q1.2  | Time        | 2 ms    | 8 ms    |  | 6 ms     | 12 ms    |
+| Q1.1  | Time        | 39 ms   | 90 ms   |  | 74 ms    | 136 ms   |
+| Q1.2  | Time        | 2 ms    | 8 ms    |  | 5 ms     | 12 ms    |
 | Q1.3  | Time        | 1 ms    | 5 ms    |  | 1 ms     | 6 ms     |
-| Q2.1  | Time        | 94 ms   | 256 ms  |  | 173 ms   | 660 ms   |
-| Q2.2  | Time        | 29 ms   | 65 ms   |  | 53 ms    | 130 ms   |
-| Q2.3  | Time        | 5 ms    | 15 ms   |  | 47 ms    | 24 ms    |
-| Q3.1  | Time        | 483 ms  | 1 s     |  | 665 ms   | 2 s      |
-| Q3.2  | Time        | 83 ms   | 167 ms  |  | 190 ms   | 354 ms   |
-| Q3.3  | Time        | 1.2 s   | 1 s     |  | 2.5 s    | 2.1 s    |
-| Q3.4  | Time        | 11 ms   | 45 ms   |  | 24 ms    | 69 ms    |
-| Q4.1  | Time        | 483 ms  | 795 ms  |  | 1.3 s    | 1.8 s    |
-| Q4.2  | Time        | 537 ms  | 914 ms  |  | 1.3 s    | 2.1 s    |
-| Q4.3  | Time        | 183 ms  | 266 ms  |  | 493 ms   | 485 ms   |
+| Q2.1  | Time        | 79 ms   | 256 ms  |  | 130 ms   | 432 ms   |
+| Q2.2  | Time        | 30 ms   | 65 ms   |  | 44 ms    | 92 ms    |
+| Q2.3  | Time        | 5 ms    | 15 ms   |  | 6 ms     | 20 ms    |
+| Q3.1  | Time        | 500 ms  | 1 s     |  | 443 ms   | 2 s      |
+| Q3.2  | Time        | 74 ms   | 167 ms  |  | 150 ms   | 354 ms   |
+| Q3.3  | Time        | 1 s     | 1 s     |  | 1.9 s    | 2.2 s    |
+| Q3.4  | Time        | 11 ms   | 45 ms   |  | 22 ms    | 69 ms    |
+| Q4.1  | Time        | 420 ms  | 795 ms  |  | 1.1 s    | 1.8 s    |
+| Q4.2  | Time        | 471 ms  | 914 ms  |  | 1.1 s    | 2.1 s    |
+| Q4.3  | Time        | 158 ms  | 266 ms  |  | 305 ms   | 485 ms   |
 
 ## My TODO
 

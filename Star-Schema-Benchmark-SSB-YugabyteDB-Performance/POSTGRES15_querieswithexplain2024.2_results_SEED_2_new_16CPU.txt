@@ -1,0 +1,471 @@
+ query 
+-------
+ Q1.1
+(1 row)
+
+                                                          QUERY PLAN                                                           
+-------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual time=73.102..73.104 rows=1 loops=1)
+   ->  Nested Loop (actual time=0.062..62.922 rows=238451 loops=1)
+         ->  Index Only Scan using q3_1_d on date_tbl d (actual time=0.030..0.058 rows=365 loops=1)
+               Index Cond: (d_year = 1993)
+               Heap Fetches: 0
+         ->  Index Only Scan using q1_1 on lineorder l (actual time=0.012..0.130 rows=653 loops=365)
+               Index Cond: ((lo_orderdate = d.d_datekey) AND (lo_discount >= 1) AND (lo_discount <= 3) AND (lo_quantity < 25))
+               Heap Fetches: 7
+ Planning Time: 0.889 ms
+ Execution Time: 73.142 ms
+(10 rows)
+
+ query 
+-------
+ Q1.2
+(1 row)
+
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual time=4.000..4.001 rows=1 loops=1)
+   ->  Nested Loop (actual time=0.100..3.629 rows=8406 loops=1)
+         ->  Seq Scan on date_tbl d (actual time=0.079..0.207 rows=31 loops=1)
+               Filter: (d_yearmonthnum = 199401)
+               Rows Removed by Filter: 2525
+         ->  Index Only Scan using q1_1 on lineorder l (actual time=0.011..0.092 rows=271 loops=31)
+               Index Cond: ((lo_orderdate = d.d_datekey) AND (lo_discount >= 4) AND (lo_discount <= 6) AND (lo_quantity >= 26) AND (lo_quantity <= 35))
+               Heap Fetches: 0
+ Planning Time: 0.263 ms
+ Execution Time: 4.030 ms
+(10 rows)
+
+ query 
+-------
+ Q1.3
+(1 row)
+
+                                                                       QUERY PLAN                                                                       
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate (actual time=0.846..0.846 rows=1 loops=1)
+   ->  Nested Loop (actual time=0.044..0.765 rows=1878 loops=1)
+         ->  Bitmap Heap Scan on date_tbl d (actual time=0.026..0.055 rows=7 loops=1)
+               Recheck Cond: (d_year = 1994)
+               Filter: (d_weeknuminyear = 6)
+               Rows Removed by Filter: 358
+               Heap Blocks: exact=7
+               ->  Bitmap Index Scan on q3_1_d (actual time=0.016..0.016 rows=365 loops=1)
+                     Index Cond: (d_year = 1994)
+         ->  Index Only Scan using q1_1 on lineorder l (actual time=0.011..0.084 rows=268 loops=7)
+               Index Cond: ((lo_orderdate = d.d_datekey) AND (lo_discount >= 5) AND (lo_discount <= 7) AND (lo_quantity >= 26) AND (lo_quantity <= 35))
+               Heap Fetches: 0
+ Planning Time: 0.200 ms
+ Execution Time: 0.865 ms
+(14 rows)
+
+ query 
+-------
+ Q2.1
+(1 row)
+
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Finalize GroupAggregate (actual time=126.191..128.483 rows=280 loops=1)
+   Group Key: d.d_year, p.p_brand1
+   ->  Gather Merge (actual time=126.179..128.409 rows=560 loops=1)
+         Workers Planned: 1
+         Workers Launched: 1
+         ->  Sort (actual time=124.168..124.189 rows=280 loops=2)
+               Sort Key: d.d_year, p.p_brand1
+               Sort Method: quicksort  Memory: 42kB
+               Worker 0:  Sort Method: quicksort  Memory: 42kB
+               ->  Partial HashAggregate (actual time=123.862..123.913 rows=280 loops=2)
+                     Group Key: d.d_year, p.p_brand1
+                     Batches: 1  Memory Usage: 241kB
+                     Worker 0:  Batches: 1  Memory Usage: 241kB
+                     ->  Hash Join (actual time=0.748..117.233 rows=48679 loops=2)
+                           Hash Cond: (l.lo_orderdate = d.d_datekey)
+                           ->  Hash Join (actual time=0.251..110.313 rows=48679 loops=2)
+                                 Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                                 ->  Nested Loop (actual time=0.063..91.175 rows=237058 loops=2)
+                                       ->  Parallel Index Only Scan using q2_1_p on part p (actual time=0.033..1.220 rows=7948 loops=2)
+                                             Index Cond: (p_category = 'MFGR#12'::text)
+                                             Heap Fetches: 0
+                                       ->  Index Only Scan using q2_1_l on lineorder l (actual time=0.004..0.009 rows=30 loops=15897)
+                                             Index Cond: (lo_partkey = p.p_partkey)
+                                             Heap Fetches: 4
+                                 ->  Hash (actual time=0.163..0.164 rows=818 loops=2)
+                                       Buckets: 1024  Batches: 1  Memory Usage: 37kB
+                                       ->  Index Only Scan using q2_1_s on supplier s (actual time=0.030..0.099 rows=818 loops=2)
+                                             Index Cond: (s_region = 'AMERICA'::text)
+                                             Heap Fetches: 0
+                           ->  Hash (actual time=0.472..0.476 rows=2556 loops=2)
+                                 Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                                 ->  Seq Scan on date_tbl d (actual time=0.005..0.237 rows=2556 loops=2)
+ Planning Time: 0.775 ms
+ Execution Time: 128.759 ms
+(34 rows)
+
+ query 
+-------
+ Q2.2
+(1 row)
+
+                                                       QUERY PLAN                                                        
+-------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=44.521..44.527 rows=56 loops=1)
+   Sort Key: d.d_year, p.p_brand1
+   Sort Method: quicksort  Memory: 28kB
+   ->  HashAggregate (actual time=44.458..44.482 rows=56 loops=1)
+         Group Key: d.d_year, p.p_brand1
+         Batches: 1  Memory Usage: 121kB
+         ->  Hash Join (actual time=0.775..42.030 rows=18993 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=0.213..38.939 rows=18993 loops=1)
+                     Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                     ->  Nested Loop (actual time=0.059..31.304 rows=94931 loops=1)
+                           ->  Index Only Scan using q2_2_p on part p (actual time=0.045..0.931 rows=3151 loops=1)
+                                 Index Cond: ((p_brand1 >= 'MFGR#2221'::text) AND (p_brand1 <= 'MFGR#2228'::text))
+                                 Heap Fetches: 0
+                           ->  Index Only Scan using q2_1_l on lineorder l (actual time=0.004..0.007 rows=30 loops=3151)
+                                 Index Cond: (lo_partkey = p.p_partkey)
+                                 Heap Fetches: 1
+                     ->  Hash (actual time=0.147..0.147 rows=811 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 37kB
+                           ->  Index Only Scan using q2_1_s on supplier s (actual time=0.009..0.091 rows=811 loops=1)
+                                 Index Cond: (s_region = 'ASIA'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=0.558..0.559 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=0.004..0.374 rows=2556 loops=1)
+ Planning Time: 0.648 ms
+ Execution Time: 44.581 ms
+(27 rows)
+
+ query 
+-------
+ Q2.3
+(1 row)
+
+                                                       QUERY PLAN                                                       
+------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate (actual time=6.547..6.780 rows=7 loops=1)
+   Group Key: d.d_year, p.p_brand1
+   ->  Sort (actual time=6.482..6.587 rows=2550 loops=1)
+         Sort Key: d.d_year
+         Sort Method: quicksort  Memory: 256kB
+         ->  Hash Join (actual time=0.599..6.077 rows=2550 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=0.181..5.292 rows=2550 loops=1)
+                     Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                     ->  Nested Loop (actual time=0.037..4.131 rows=13155 loops=1)
+                           ->  Index Only Scan using q2_2_p on part p (actual time=0.023..0.062 rows=402 loops=1)
+                                 Index Cond: (p_brand1 = 'MFGR#2239'::text)
+                                 Heap Fetches: 0
+                           ->  Index Only Scan using q4_1_l on lineorder l (actual time=0.004..0.008 rows=33 loops=402)
+                                 Index Cond: (lo_partkey = p.p_partkey)
+                                 Heap Fetches: 0
+                     ->  Hash (actual time=0.140..0.141 rows=784 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 36kB
+                           ->  Index Only Scan using q2_1_s on supplier s (actual time=0.014..0.083 rows=784 loops=1)
+                                 Index Cond: (s_region = 'EUROPE'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=0.414..0.415 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=0.004..0.224 rows=2556 loops=1)
+ Planning Time: 0.535 ms
+ Execution Time: 6.810 ms
+(26 rows)
+
+ query 
+-------
+ Q3.1
+(1 row)
+
+                                                                    QUERY PLAN                                                                    
+--------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=433.217..433.277 rows=150 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 35kB
+   ->  Finalize GroupAggregate (actual time=433.063..433.202 rows=150 loops=1)
+         Group Key: c.c_nation, s.s_nation, d.d_year
+         ->  Gather Merge (actual time=433.056..433.156 rows=300 loops=1)
+               Workers Planned: 1
+               Workers Launched: 1
+               ->  Sort (actual time=429.812..429.821 rows=150 loops=2)
+                     Sort Key: c.c_nation, s.s_nation, d.d_year
+                     Sort Method: quicksort  Memory: 35kB
+                     Worker 0:  Sort Method: quicksort  Memory: 35kB
+                     ->  Partial HashAggregate (actual time=429.668..429.704 rows=150 loops=2)
+                           Group Key: c.c_nation, s.s_nation, d.d_year
+                           Batches: 1  Memory Usage: 225kB
+                           Worker 0:  Batches: 1  Memory Usage: 225kB
+                           ->  Hash Join (actual time=0.799..392.627 rows=223106 loops=2)
+                                 Hash Cond: (l.lo_orderdate = d.d_datekey)
+                                 ->  Hash Join (actual time=0.268..363.579 rows=245148 loops=2)
+                                       Hash Cond: (l.lo_suppkey = s.s_suppkey)
+                                       ->  Nested Loop (actual time=0.058..269.236 rows=1207308 loops=2)
+                                             ->  Parallel Index Only Scan using q3_1_c on customer c (actual time=0.027..0.945 rows=6016 loops=2)
+                                                   Index Cond: (c_region = 'ASIA'::text)
+                                                   Heap Fetches: 0
+                                             ->  Index Only Scan using q3_1_2 on lineorder l (actual time=0.006..0.031 rows=201 loops=12033)
+                                                   Index Cond: (lo_custkey = c.c_custkey)
+                                                   Heap Fetches: 51
+                                       ->  Hash (actual time=0.191..0.192 rows=811 loops=2)
+                                             Buckets: 1024  Batches: 1  Memory Usage: 44kB
+                                             ->  Index Only Scan using q3_1_s on supplier s (actual time=0.018..0.114 rows=811 loops=2)
+                                                   Index Cond: (s_region = 'ASIA'::text)
+                                                   Heap Fetches: 0
+                                 ->  Hash (actual time=0.507..0.508 rows=2192 loops=2)
+                                       Buckets: 4096  Batches: 1  Memory Usage: 118kB
+                                       ->  Seq Scan on date_tbl d (actual time=0.006..0.314 rows=2192 loops=2)
+                                             Filter: ((d_year >= 1992) AND (d_year <= 1997))
+                                             Rows Removed by Filter: 364
+ Planning Time: 0.754 ms
+ Execution Time: 433.361 ms
+(39 rows)
+
+ query 
+-------
+ Q3.2
+(1 row)
+
+                                                        QUERY PLAN                                                         
+---------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=149.615..149.641 rows=600 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 71kB
+   ->  HashAggregate (actual time=149.199..149.327 rows=600 loops=1)
+         Group Key: c.c_city, s.s_city, d.d_year
+         Batches: 1  Memory Usage: 913kB
+         ->  Hash Join (actual time=6.742..145.328 rows=18303 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=6.292..141.797 rows=20109 loops=1)
+                     Hash Cond: (l.lo_custkey = c.c_custkey)
+                     ->  Nested Loop (actual time=0.029..105.531 rows=489406 loops=1)
+                           ->  Seq Scan on supplier s (actual time=0.013..0.478 rows=163 loops=1)
+                                 Filter: ((s_nation)::text = 'UNITED STATES'::text)
+                                 Rows Removed by Filter: 3837
+                           ->  Index Only Scan using q4_1_2l on lineorder l (actual time=0.010..0.445 rows=3002 loops=163)
+                                 Index Cond: (lo_suppkey = s.s_suppkey)
+                                 Heap Fetches: 6
+                     ->  Hash (actual time=6.250..6.251 rows=2445 loops=1)
+                           Buckets: 4096  Batches: 1  Memory Usage: 147kB
+                           ->  Seq Scan on customer c (actual time=0.016..5.859 rows=2445 loops=1)
+                                 Filter: ((c_nation)::text = 'UNITED STATES'::text)
+                                 Rows Removed by Filter: 57555
+               ->  Hash (actual time=0.443..0.444 rows=2192 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 118kB
+                     ->  Seq Scan on date_tbl d (actual time=0.007..0.268 rows=2192 loops=1)
+                           Filter: ((d_year >= 1992) AND (d_year <= 1997))
+                           Rows Removed by Filter: 364
+ Planning Time: 0.664 ms
+ Execution Time: 150.073 ms
+(29 rows)
+
+ query 
+-------
+ Q3.3
+(1 row)
+
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=1836.630..1837.241 rows=15000 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 1556kB
+   ->  GroupAggregate (actual time=1670.269..1825.944 rows=15000 loops=1)
+         Group Key: c.c_city, s.s_city, d.d_year
+         ->  Sort (actual time=1670.248..1782.388 rows=432445 loops=1)
+               Sort Key: c.c_city, s.s_city, d.d_year
+               Sort Method: external merge  Disk: 17800kB
+               ->  Nested Loop (actual time=10.147..1082.882 rows=432445 loops=1)
+                     ->  Hash Join (actual time=10.134..759.609 rows=474948 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  Nested Loop (actual time=0.022..525.531 rows=2374248 loops=1)
+                                 ->  Seq Scan on supplier s (actual time=0.008..1.267 rows=791 loops=1)
+                                       Filter: ("substring"((s_phone)::text, 1, 1) = '3'::text)
+                                       Rows Removed by Filter: 3209
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=0.008..0.462 rows=3002 loops=791)
+                                       Index Cond: (lo_suppkey = s.s_suppkey)
+                                       Heap Fetches: 30
+                           ->  Hash (actual time=10.103..10.104 rows=11940 loops=1)
+                                 Buckets: 16384 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 688kB
+                                 ->  Seq Scan on customer c (actual time=0.004..8.759 rows=11940 loops=1)
+                                       Filter: ("substring"((c_phone)::text, 1, 1) = '3'::text)
+                                       Rows Removed by Filter: 48060
+                     ->  Index Only Scan using q2_1_d on date_tbl d (actual time=0.001..0.001 rows=1 loops=474948)
+                           Index Cond: ((d_datekey = l.lo_orderdate) AND (d_year >= 1992) AND (d_year <= 1997))
+                           Heap Fetches: 0
+ Planning Time: 0.610 ms
+ Execution Time: 1838.838 ms
+(28 rows)
+
+ query 
+-------
+ Q3.4
+(1 row)
+
+                                                           QUERY PLAN                                                           
+--------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=20.648..20.652 rows=6 loops=1)
+   Sort Key: d.d_year, (sum(l.lo_revenue)) DESC
+   Sort Method: quicksort  Memory: 25kB
+   ->  GroupAggregate (actual time=20.624..20.647 rows=6 loops=1)
+         Group Key: c.c_city, s.s_city, d.d_year
+         ->  Sort (actual time=20.613..20.623 rows=171 loops=1)
+               Sort Key: d.d_year
+               Sort Method: quicksort  Memory: 37kB
+               ->  Nested Loop (actual time=5.116..20.576 rows=171 loops=1)
+                     ->  Hash Join (actual time=5.107..20.383 rows=190 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  Nested Loop (actual time=0.039..12.459 rows=59806 loops=1)
+                                 ->  Seq Scan on supplier s (actual time=0.020..0.390 rows=20 loops=1)
+                                       Filter: ((s_city)::text = 'UNITED KI1'::text)
+                                       Rows Removed by Filter: 3980
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=0.007..0.408 rows=2990 loops=20)
+                                       Index Cond: (lo_suppkey = s.s_suppkey)
+                                       Heap Fetches: 0
+                           ->  Hash (actual time=5.021..5.022 rows=208 loops=1)
+                                 Buckets: 1024  Batches: 1  Memory Usage: 18kB
+                                 ->  Seq Scan on customer c (actual time=0.019..4.982 rows=208 loops=1)
+                                       Filter: ((c_city)::text = 'UNITED KI1'::text)
+                                       Rows Removed by Filter: 59792
+                     ->  Index Only Scan using q2_1_d on date_tbl d (actual time=0.001..0.001 rows=1 loops=190)
+                           Index Cond: ((d_datekey = l.lo_orderdate) AND (d_year >= 1992) AND (d_year <= 1997))
+                           Heap Fetches: 0
+ Planning Time: 0.667 ms
+ Execution Time: 20.686 ms
+(28 rows)
+
+ query 
+-------
+ Q4.1
+(1 row)
+
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=1060.014..1060.023 rows=35 loops=1)
+   Sort Key: d.d_year, c.c_nation
+   Sort Method: quicksort  Memory: 27kB
+   ->  HashAggregate (actual time=1059.988..1059.999 rows=35 loops=1)
+         Group Key: d.d_year, c.c_nation
+         Batches: 1  Memory Usage: 40kB
+         ->  Hash Join (actual time=18.451..1043.985 rows=99244 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=17.918..1025.896 rows=99244 loops=1)
+                     Hash Cond: (l.lo_custkey = c.c_custkey)
+                     ->  Hash Join (actual time=15.451..948.170 rows=491634 loops=1)
+                           Hash Cond: (l.lo_partkey = p.p_partkey)
+                           ->  Nested Loop (actual time=0.030..530.184 rows=2453954 loops=1)
+                                 ->  Index Only Scan using q2_1_s on supplier s (actual time=0.017..0.147 rows=818 loops=1)
+                                       Index Cond: (s_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=0.008..0.447 rows=3000 loops=818)
+                                       Index Cond: (lo_suppkey = s.s_suppkey)
+                                       Heap Fetches: 27
+                           ->  Hash (actual time=15.255..15.257 rows=79994 loops=1)
+                                 Buckets: 131072  Batches: 1  Memory Usage: 3837kB
+                                 ->  Index Only Scan using q4_1_p on part p (actual time=0.029..7.429 rows=79994 loops=1)
+                                       Index Cond: (p_mfgr = 'MFGR#1'::text)
+                                       Heap Fetches: 0
+                     ->  Hash (actual time=2.436..2.437 rows=12068 loops=1)
+                           Buckets: 16384  Batches: 1  Memory Usage: 676kB
+                           ->  Index Only Scan using q3_1_c on customer c (actual time=0.018..1.397 rows=12068 loops=1)
+                                 Index Cond: (c_region = 'AMERICA'::text)
+                                 Heap Fetches: 0
+               ->  Hash (actual time=0.525..0.526 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=0.005..0.345 rows=2556 loops=1)
+ Planning Time: 1.093 ms
+ Execution Time: 1060.087 ms
+(34 rows)
+
+ query 
+-------
+ Q4.2
+(1 row)
+
+                                                           QUERY PLAN                                                            
+---------------------------------------------------------------------------------------------------------------------------------
+ Sort (actual time=1035.856..1035.875 rows=350 loops=1)
+   Sort Key: d.d_year, s.s_nation, p.p_category
+   Sort Method: quicksort  Memory: 50kB
+   ->  HashAggregate (actual time=1035.572..1035.627 rows=350 loops=1)
+         Group Key: d.d_year, s.s_nation, p.p_category
+         Batches: 1  Memory Usage: 273kB
+         ->  Hash Join (actual time=74.960..1001.396 rows=197646 loops=1)
+               Hash Cond: (l.lo_orderdate = d.d_datekey)
+               ->  Hash Join (actual time=74.516..973.103 rows=197646 loops=1)
+                     Hash Cond: (l.lo_partkey = p.p_partkey)
+                     ->  Hash Join (actual time=2.254..740.688 rows=493508 loops=1)
+                           Hash Cond: (l.lo_custkey = c.c_custkey)
+                           ->  Nested Loop (actual time=0.056..526.508 rows=2453954 loops=1)
+                                 ->  Index Only Scan using q3_1_s on supplier s (actual time=0.037..0.183 rows=818 loops=1)
+                                       Index Cond: (s_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                                 ->  Index Only Scan using q4_1_2l on lineorder l (actual time=0.007..0.437 rows=3000 loops=818)
+                                       Index Cond: (lo_suppkey = s.s_suppkey)
+                                       Heap Fetches: 27
+                           ->  Hash (actual time=2.147..2.148 rows=12068 loops=1)
+                                 Buckets: 16384  Batches: 1  Memory Usage: 553kB
+                                 ->  Index Only Scan using q3_1_c on customer c (actual time=0.011..1.149 rows=12068 loops=1)
+                                       Index Cond: (c_region = 'AMERICA'::text)
+                                       Heap Fetches: 0
+                     ->  Hash (actual time=71.565..71.565 rows=159946 loops=1)
+                           Buckets: 262144  Batches: 2  Memory Usage: 5498kB
+                           ->  Seq Scan on part p (actual time=0.017..44.078 rows=159946 loops=1)
+                                 Filter: (((p_mfgr)::text = 'MFGR#1'::text) OR ((p_mfgr)::text = 'MFGR#2'::text))
+                                 Rows Removed by Filter: 240054
+               ->  Hash (actual time=0.428..0.429 rows=2556 loops=1)
+                     Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                     ->  Seq Scan on date_tbl d (actual time=0.006..0.220 rows=2556 loops=1)
+ Planning Time: 1.042 ms
+ Execution Time: 1035.995 ms
+(34 rows)
+
+ query 
+-------
+ Q4.3
+(1 row)
+
+                                                                    QUERY PLAN                                                                     
+---------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize GroupAggregate (actual time=283.150..304.568 rows=20255 loops=1)
+   Group Key: d.d_year, s.s_city, p.p_brand1
+   ->  Gather Merge (actual time=283.145..299.125 rows=30502 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial GroupAggregate (actual time=275.704..280.464 rows=10167 loops=3)
+               Group Key: d.d_year, s.s_city, p.p_brand1
+               ->  Sort (actual time=275.692..276.870 rows=13208 loops=3)
+                     Sort Key: d.d_year, s.s_city, p.p_brand1
+                     Sort Method: quicksort  Memory: 1623kB
+                     Worker 0:  Sort Method: quicksort  Memory: 1279kB
+                     Worker 1:  Sort Method: quicksort  Memory: 1279kB
+                     ->  Hash Join (actual time=221.254..253.860 rows=13208 loops=3)
+                           Hash Cond: (l.lo_orderdate = d.d_datekey)
+                           ->  Hash Join (actual time=220.782..251.530 rows=13208 loops=3)
+                                 Hash Cond: (p.p_partkey = l.lo_partkey)
+                                 ->  Parallel Seq Scan on part p (actual time=0.010..14.788 rows=53315 loops=3)
+                                       Filter: (((p_mfgr)::text = 'MFGR#1'::text) OR ((p_mfgr)::text = 'MFGR#2'::text))
+                                       Rows Removed by Filter: 80018
+                                 ->  Hash (actual time=220.375..220.380 rows=98639 loops=3)
+                                       Buckets: 131072  Batches: 1  Memory Usage: 6708kB
+                                       ->  Hash Join (actual time=2.258..197.817 rows=98639 loops=3)
+                                             Hash Cond: (l.lo_custkey = c.c_custkey)
+                                             ->  Nested Loop (actual time=0.057..153.573 rows=489406 loops=3)
+                                                   ->  Seq Scan on supplier s (actual time=0.007..0.469 rows=163 loops=3)
+                                                         Filter: ((s_nation)::text = 'UNITED STATES'::text)
+                                                         Rows Removed by Filter: 3837
+                                                   ->  Index Only Scan using q4_1_2l on lineorder l (actual time=0.010..0.729 rows=3002 loops=489)
+                                                         Index Cond: (lo_suppkey = s.s_suppkey)
+                                                         Heap Fetches: 18
+                                             ->  Hash (actual time=2.140..2.141 rows=12068 loops=3)
+                                                   Buckets: 16384  Batches: 1  Memory Usage: 553kB
+                                                   ->  Index Only Scan using q3_1_c on customer c (actual time=0.023..1.180 rows=12068 loops=3)
+                                                         Index Cond: (c_region = 'AMERICA'::text)
+                                                         Heap Fetches: 0
+                           ->  Hash (actual time=0.428..0.429 rows=2556 loops=3)
+                                 Buckets: 4096  Batches: 1  Memory Usage: 132kB
+                                 ->  Seq Scan on date_tbl d (actual time=0.007..0.221 rows=2556 loops=3)
+ Planning Time: 1.090 ms
+ Execution Time: 305.272 ms
+(40 rows)
+
+
