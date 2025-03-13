@@ -20,11 +20,13 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - Run Seed 3 and 10 against PG for PG timings 
 - check execution plans are optimal from indexing or if i should be looking at a different join order or plan
 - Test against preview Yugabyte (2.25)
+- Review Q3.1 for optimisations (Version 2.25 might just sort that one)
+- Run 17M and 60M on PG
 
 Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 - Query Parameters used are displayed below 
 
-- <b>Using a Multi-AZ 3 node 16CPU m7i YBs</b>
+- <b>Using Multi-AZ 3 node 16CPU m7i 2024.2.0 YB</b>
 - <b>Using a One node 16CPU m7i PG15, Assuming that it would need replicas of the same size for HA/DR</b>
 
 | Query | Seed(LRows) | PG (6M) | YB (6M) |  | PG (11M) | YB (11M) |
@@ -43,10 +45,7 @@ Summary of Star Schema Benchmark (SSB) Performance on YugabyteDB And PostgreSQL
 | Q4.2  | Time        | 471 ms  | 914 ms  |  | 1.1 s    | 2.1 s    |
 | Q4.3  | Time        | 158 ms  | 266 ms  |  | 305 ms   | 485 ms   |
 
-## My TODO
 
-- Review Q3.1 for optimisation 
-- Run 17M and 60M on PG
 
 
 | Query | Seed(LRows) | YB (17M) | YB (60M) |
