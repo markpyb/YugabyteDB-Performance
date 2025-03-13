@@ -12,6 +12,7 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - Results highlight YugabyteDB’s effectiveness at distributed JOINs and aggregations and great performance with PostgreSQL API
 - Ideal for mixed OLTP/OLAP/HTAP scenarios, enabling single-database solutions.
 - Seeing great performance results against PostgresSQL, considering PostgreSQL has one node usually with non zero RPO fault tolerance 
+- Scaling the cluster to 6 nodes from 3 (>=120TB max disk util) the tablets split and the latencies are similar even in the slowest query
 
 ## My TODO
 
