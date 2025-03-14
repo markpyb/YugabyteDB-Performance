@@ -5,6 +5,9 @@ Reference: https://cs.umb.edu/~poneil/StarSchemaB.pdf
 - Standard SSB schema (normalized to SSB standards).
 - No extra denormalization or restructuring done yet specifically for performance. 
 
+## Why?
+
+- People are using PG in this way. use cases which are joining on PK-FK relations to be further aggregated for live reporting.
 
 ## Overall Notes:
 
