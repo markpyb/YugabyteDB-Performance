@@ -14,19 +14,19 @@ go get github.com/yugabyte/pgx/v5
 ```
 
 ```
-ysqlsh -h eu-west-1.fb875775-afda-4745-9741-d42cb9abf9c3.aws.yugabyte.cloud -U admin -d nwbox -c "drop table payments;"
+ysqlsh -h hostname -U admin -d db -c "drop table payments;"
 go run main.go -concurrency=48 -poolsize=250
 ```
 
-<b>Server-side pooling through YugabyteDB connection manager required/reccomended depending on node size</b>
+<b>Server-side pooling through YugabyteDB connection manager required/recommended depending on node size</b>
 
 ```
-ysqlsh -h eu-west-1.fb875775-afda-4745-9741-d42cb9abf9c3.aws.yugabyte.cloud -U admin -d nwbox -c "drop table payments;"
+ysqlsh -h hostname -U admin -d db -c "drop table payments;"
 go run main.go -concurrency=114 -poolsize=1000
 ```
 
 ```
-ysqlsh -h eu-west-1.fb875775-afda-4745-9741-d42cb9abf9c3.aws.yugabyte.cloud -U admin -d nwbox  -c "drop table payments;"
+ysqlsh -h hostname -U admin -d db  -c "drop table payments;"
 go run main.go -concurrency=252 -poolsize=2500
 ```
 
