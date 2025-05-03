@@ -1,6 +1,16 @@
-DROP TABLE IF EXISTS staging.customer;
+YugabyteDB Specs:
 
-CREATE TABLE staging.customer (
+M7i.4Xlarge RF3
+Client to node TLS enabled
+Node to node TLS disabled
+Master flag -> ysql_num_shards_per_tserver=1
+
+export PGPASSWORD="pw!"
+ysqlsh -h 10.0.0.40
+
+DROP TABLE IF EXISTS customer;
+
+CREATE TABLE customer (
     id uuid PRIMARY KEY NOT NULL,
     customercode int8 NULL,
     clientname varchar(150) NULL,
@@ -14,7 +24,15 @@ CREATE TABLE staging.customer (
     usequity_accountid varchar(200) NULL,
     email varchar(150) NULL,
     branch varchar(100) NULL
-);
+) SPLIT INTO 3 TABLETS;
+
+
+create extension pgcrypto;
+\timing 
+
+SET yb_disable_transactional_writes=true;
+SET yb_enable_upsert_mode=true;
+SET yb_fetch_row_limit=10000;
 
 INSERT INTO staging.customer (
     id, customercode, clientname, panno, ourcode, schemecode, ucid, strategycode, createddate, updateddate, usequity_accountid, email, branch
@@ -22,21 +40,25 @@ INSERT INTO staging.customer (
 SELECT
     gen_random_uuid(),
     generate_series,
-    'Client_' || generate_series,
-    'PAN' || lpad((generate_series % 9999999999)::text, 10, '0'),
-    'OUR' || lpad((generate_series % 999999)::text, 6, '0'),
-    (generate_series % 999999999999999999),
-    generate_series % 99999999,
-    (generate_series % 999999999999999999),
-    NOW() - INTERVAL '1 day' * (generate_series % 365),
-    NOW(),
-    'ACCT' || generate_series,
-    'email' || generate_series || '@example.com',
-    'Branch_' || (generate_series % 1000)
+    'C_' || generate_series,
+    'PAN' || lpad((generate_series % 9999999)::text, 7, '0'),
+    'OUR' || lpad((generate_series % 99999)::text, 5, '0'),
+    (generate_series % 9999999999),
+    generate_series % 9999999,
+    (generate_series % 9999999999),
+    CURRENT_DATE - (generate_series % 365),
+    CURRENT_DATE,
+    'ACCT' || (generate_series % 9999999),
+    'e' || (generate_series % 9999999) || '@x.com',
+    'B_' || (generate_series % 999)
 FROM generate_series(1, 12194187);
 
 
-CREATE OR REPLACE FUNCTION ctas(oldtablename TEXT, newtablename TEXT, primarykey TEXT)
+reset yb_disable_transactional_writes;
+reSET yb_enable_upsert_mode;
+reSET yb_fetch_row_limit;
+
+CREATE OR REPLACE FUNCTION ctas(oldtablename TEXT, newtablename TEXT)
 RETURNS VOID AS $$
 DECLARE
     total_rows BIGINT;
@@ -49,15 +71,15 @@ DECLARE
     i INTEGER := 0;
     percent_complete DECIMAL;
     sql TEXT;
-    pk_exists INTEGER;
+    primarykey TEXT;
 BEGIN
-    SELECT COUNT(*) INTO pk_exists
-    FROM information_schema.columns
-    WHERE table_name = oldtablename
-      AND column_name IN (SELECT TRIM(col) FROM unnest(string_to_array(primarykey, ',')) AS col);
+    SELECT string_agg(attname, ',') INTO primarykey
+    FROM pg_index i
+    JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
+    WHERE i.indrelid = oldtablename::regclass AND i.indisprimary;
 
-    IF pk_exists = 0 THEN
-        RAISE EXCEPTION 'Primary key column(s) % do not exist in table %', primarykey, oldtablename;
+    IF primarykey IS NULL THEN
+        RAISE EXCEPTION 'Primary key does not exist for table %', oldtablename;
     END IF;
 
     EXECUTE FORMAT('SELECT COUNT(*) * 128 FROM %I WHERE yb_hash_code((%s)) < 65536/128', oldtablename, primarykey)
@@ -105,3 +127,8 @@ EXCEPTION
         RAISE EXCEPTION 'Error occurred %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
+
+
+SELECT ctas('customer', 'customer_backup');
+
+
