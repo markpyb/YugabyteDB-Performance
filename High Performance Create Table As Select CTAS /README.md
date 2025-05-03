@@ -1,12 +1,12 @@
 YugabyteDB Specs:
 
-``M7i.4Xlarge RF3
+```M7i.4Xlarge RF3
 Client to node TLS enabled
 Node to node TLS disabled
 Master flag -> ysql_num_shards_per_tserver=1
-``
+```
 
-``
+```
 export PGPASSWORD="pw!"
 ysqlsh -h 10.0.0.40
 
@@ -55,23 +55,23 @@ FROM generate_series(1, 12194187);
 reset yb_disable_transactional_writes;
 reSET yb_enable_upsert_mode;
 reSET yb_fetch_row_limit;
-``
+```
 
 
 If the table isnt so big in one CTAS.
 
-``
+```
 drop table if exists customer_backup;
 SET yb_disable_transactional_writes=true;
 SET yb_enable_upsert_mode=true;
 SET yb_fetch_row_limit=10000;
 create table customer_backup as select * from customer; 
-``
+```
 
 
 if the table is really really big you can use this function and see the progress.
 
-``
+```
 CREATE OR REPLACE FUNCTION ctas(oldtablename TEXT, newtablename TEXT)
 RETURNS VOID AS $$
 DECLARE
@@ -143,9 +143,9 @@ EXCEPTION
         RAISE EXCEPTION 'Error occurred %', SQLERRM;
 END;
 $$ LANGUAGE plpgsql;
-``
+```
 
-``
+```
 drop table if exists customer_backup;
 ctas('customer', 'customer_backup');
 
@@ -161,4 +161,4 @@ NOTICE:  CTAS operation completed: 100%
 (1 row)
 
 Time: 145870.769 ms (02:25.871)
-``
+```
