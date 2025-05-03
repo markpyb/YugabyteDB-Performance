@@ -8,6 +8,7 @@ Master flag -> ysql_num_shards_per_tserver=1
 export PGPASSWORD="pw!"
 ysqlsh -h 10.0.0.40
 
+
 DROP TABLE IF EXISTS customer;
 
 CREATE TABLE customer (
@@ -34,7 +35,7 @@ SET yb_disable_transactional_writes=true;
 SET yb_enable_upsert_mode=true;
 SET yb_fetch_row_limit=10000;
 
-INSERT INTO staging.customer (
+INSERT INTO customer (
     id, customercode, clientname, panno, ourcode, schemecode, ucid, strategycode, createddate, updateddate, usequity_accountid, email, branch
 )
 SELECT
@@ -52,6 +53,7 @@ SELECT
     'e' || (generate_series % 9999999) || '@x.com',
     'B_' || (generate_series % 999)
 FROM generate_series(1, 12194187);
+
 
 
 reset yb_disable_transactional_writes;
@@ -128,7 +130,5 @@ EXCEPTION
 END;
 $$ LANGUAGE plpgsql;
 
-
+drop table customer_Backup;
 SELECT ctas('customer', 'customer_backup');
-
-
